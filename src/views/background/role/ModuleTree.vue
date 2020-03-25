@@ -16,7 +16,7 @@
           <el-checkbox
             v-for="(item, index) in data.privileges"
             :key="index"
-            v-model="item.checked">{{item.name}}</el-checkbox>
+            v-model="item.checked">{{ item.name }}</el-checkbox>
         </div>
       </div>
     </el-tree>
@@ -119,8 +119,24 @@ export default {
     // 获取模块权限
     getModulePrivilegeList () {
       getModulePrivilege().then(res => {
-        let tempList = res.list
+        this.tree = this.getTree(res.list, null, 1)
       })
+    },
+    getTree (data, pid, index) {
+      const treeList = []
+      data.map(item => {
+        if (item.parent_id === pid) {
+          item.children = this.getTree(data, item.id, index+1)
+          treeList.push({
+            id: item.id,
+            label: item.name,
+            level: index,
+            privileges: item.common_Privileges,
+            children: item.children
+          })
+        }
+      })
+      return treeList
     },
     checkChange (node, selected) {
       node.privileges.forEach(item => {

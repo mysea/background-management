@@ -67,7 +67,11 @@ export function getRoleModules (id) {
 }
 
 export function addRoleModule (id, data) {
-  return request.post(`${URL.ADD_ROLE_MODULE}/${id}/Common_Module`, data)
+  return request.post(`${URL.ADD_ROLE_MODULE}/${id}/Common_Privilege`, data)
+}
+
+export function addRoleUser (id, data) {
+  return request.post(`${URL.ADD_ROLE_USER}/${id}/Common_User`, data)
 }
 
 // 字典管理

@@ -32,6 +32,7 @@ const URL = {
   DELETE_ROLE: urlHandle('/api/Common_Role'),
   GET_ROLE_MODULES: urlHandle('/api/Common_Role'),
   ADD_ROLE_MODULE: urlHandle('/api/Common_Role'),
+  ADD_ROLE_USER: urlHandle('/api/Common_Role'),
   // 字典管理
   GET_DICTIONARYS: urlHandle('/api/Common_Dictionary'),
   ADD_DICTIONARY: urlHandle('/api/Common_Dictionary'),

@@ -30,13 +30,13 @@
       <div class="content">
         <el-tabs v-model="mainMenuIndex">
           <el-tab-pane label="角色权限" name="auth">
-            <div class="auth-box" v-loading="ruleLoading">
+            <div class="auth-box" v-loading="authLoading">
               <module-tree :value="privilegeList" @save="saveUsePrivileges"></module-tree>
             </div>
           </el-tab-pane>
           <el-tab-pane label="角色用户" name="user">
             <div class="user-box" v-loading="userLoading">
-              <el-button type="primary" class="table-top-button" @click="relateUser">关联用户</el-button>
+              <el-button type="primary" class="table-top-button" @click="visible = true">关联用户</el-button>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -98,7 +98,9 @@ import {
   addRole,
   updateRole,
   deleteRole,
-  getModules
+  getRoleModules,
+  addRoleModule,
+  addRoleUser
 } from '@/api/background'
 import {
   saveSuccessToast,
@@ -116,7 +118,7 @@ export default {
     return {
       navLoading: false,
       userLoading: false,
-      ruleLoading: false,
+      authLoading: false,
       mainMenuIndex: 'auth',
       roleList: [],
       activeRole: {},
@@ -133,7 +135,7 @@ export default {
         ]
       },
       // 关联权限
-      privilegeList: [1, 2, 5, 8],
+      privilegeList: [],
       // 关联用户
       visible: false,
       selectedUsers: []
@@ -225,23 +227,35 @@ export default {
     },
     // 关联权限
     getUserPrivileges () {
-      getModules({}).then(res => {
-        console.log(res)
+      this.authLoading = true
+      getRoleModules(this.activeRole.id).then(res => {
+        this.authLoading = false
+        this.privilegeList = res
       })
     },
     saveUsePrivileges (data) {
       this.privilegeList = data
+      this.authLoading = true
+      addRoleModule(this.activeRole.id, this.privilegeList).then(res => {
+        this.authLoading = false
+        if (res) {
+          saveSuccessToast()
+        }
+      })
     },
     // 关联用户
-    relateUser () {
-      this.visible = true
-    },
     handleCancel () {
       this.visible = false
     },
     handleConfirm () {
-      console.log(this.selectedUsers)
       this.visible = false
+      this.userLoading = true
+      addRoleUser(this.activeRole.id, this.selectedUsers).then(res => {
+        this.userLoading = false
+        if (res) {
+          saveSuccessToast()
+        }
+      })
     },
     checkoutChange (data) {
       this.selectedUsers = data.value
