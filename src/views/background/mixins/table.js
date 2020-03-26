@@ -1,13 +1,15 @@
 import {
   getPrivileges,
-  getDictionarys
+  getDictionarys,
+  getRoleUsers,
+  getWebsites
 } from '@/api/background'
 import { getUsers } from '@/api/user'
 export default {
   data () {
     return {
       loading: false,
-      tableHeight: document.documentElement.clientHeight - 184,
+      tableHeight: document.documentElement.clientHeight - this.getConstHeight(),
       list: [],
       selectionsList: [],
       total: 0,
@@ -42,22 +44,28 @@ export default {
         pageIndex: _this.currentPage,
         pagesize: _this.pageSize
       }
+      var request = null
       if (_this.type === 'dictionary') {
-        getDictionarys(params).then(res => {
-          _this.loading = false
-          _this.list = res.list
-          _this.total = res.paginationMetadata.totalCount
-        })
+        request = getDictionarys(params)
       } else if (_this.type === 'user') {
         params.departmentid = this.departmentid
-        getUsers(params).then(res => {
-          _this.loading = false
-          _this.list = res.list
-          _this.total = res.paginationMetadata.totalCount
-        })
+        request = getUsers(params)
       } else if (_this.type === 'priviledge') {
         params.module_id = this.module_id
-        getPrivileges(params).then(res => {
+        request = getPrivileges(params)
+      } else if (_this.type === 'roleUser') {
+        request = getRoleUsers(this.role.id)
+      } else if (_this.type === 'website') {
+        request = getWebsites(params)
+      }
+      if (_this.type === 'roleUser') {
+        request.then(res => {
+          _this.loading = false
+          _this.list = res
+          _this.total = res.length
+        })
+      } else {
+        request.then(res => {
           _this.loading = false
           _this.list = res.list
           _this.total = res.paginationMetadata.totalCount
@@ -108,8 +116,17 @@ export default {
       this.currentPage = val
       this.getList()
     },
+    getConstHeight () {
+      let constHeight = 0
+      if (this.type === 'roleUser') {
+        constHeight = 235
+      } else {
+        constHeight = 184
+      }
+      return constHeight
+    },
     updateTableHeight () {
-      this.tableHeight = document.documentElement.clientHeight - 184
+      this.tableHeight = document.documentElement.clientHeight - this.getConstHeight()
     }
   }
 }
