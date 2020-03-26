@@ -79,12 +79,12 @@ export function deleteRole (id) {
   return request.delete(`${URL.DELETE_ROLE}/${id}`)
 }
 
-export function getRoleModules (id) {
-  return request.get(`${URL.GET_ROLE_MODULES}/${id}/Common_Module`)
+export function getRolePrivileges (id) {
+  return request.get(`${URL.GET_ROLE_PRIVILEGES}/${id}/Common_Privilege`)
 }
 
-export function addRoleModule (id, data) {
-  return request.post(`${URL.ADD_ROLE_MODULE}/${id}/Common_Privilege`, data)
+export function addRolePrivilege (id, data) {
+  return request.post(`${URL.ADD_ROLE_PRIVILEGE}/${id}/Common_Privilege`, data)
 }
 
 export function getRoleUsers (id) {

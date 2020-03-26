@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-input
-      placeholder="输入用户名"
+      placeholder="搜索用户名"
       size="small"
       v-model="searchInput"
       suffix-icon="el-icon-search"

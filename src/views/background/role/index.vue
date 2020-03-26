@@ -31,12 +31,12 @@
         <el-tabs v-model="mainMenuIndex">
           <el-tab-pane label="角色权限" name="auth">
             <div class="auth-box" v-loading="authLoading">
-              <module-tree :value="privilegeList" @save="saveUsePrivileges"></module-tree>
+              <relate-privilege :value="privilegeList" @save="saveUsePrivileges"></relate-privilege>
             </div>
           </el-tab-pane>
           <el-tab-pane label="角色用户" name="user">
             <div class="user-box" v-loading="userLoading">
-              <el-button type="primary" class="table-top-button" @click="visible = true">关联用户</el-button>
+              <relate-user :value="activeRole"></relate-user>
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -68,27 +68,6 @@
         <el-button @click="isShowDialog = false">取 消</el-button>
       </span>
     </el-dialog>
-    <!-- 关联用户 -->
-    <el-dialog
-      title="关联用户"
-      :visible="visible"
-      @close="handleCancel"
-      :append-to-body="true"
-      width="600px">
-      <div class="handle-box">
-        <flexbox class="handle-item" align="stretch">
-          <div class="handle-item-name" style="margin-top: 8px;">选择用户：</div>
-          <x-user-cell
-            :value="selectedUsers"
-            @value-change="checkoutChange"
-            class="handle-item-content"></x-user-cell>
-        </flexbox>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" @click="handleConfirm">保存</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -98,21 +77,20 @@ import {
   addRole,
   updateRole,
   deleteRole,
-  getRoleModules,
-  addRoleModule,
-  addRoleUser
+  getRolePrivileges,
+  addRolePrivilege
 } from '@/api/background'
 import {
   saveSuccessToast,
   deleteSuccessToast,
   deleteConfirm
   } from '@/utils/toast'
-import { XUserCell } from '@/components/form'
-import ModuleTree from './ModuleTree'
+import RelatePrivilege from './RelatePrivilege'
+import RelateUser from './RelateUser'
 export default {
   components: {
-    XUserCell,
-    ModuleTree
+    RelatePrivilege,
+    RelateUser
   },
   data () {
     return {
@@ -135,10 +113,7 @@ export default {
         ]
       },
       // 关联权限
-      privilegeList: [],
-      // 关联用户
-      visible: false,
-      selectedUsers: []
+      privilegeList: []
     }
   },
   created () {
@@ -228,43 +203,30 @@ export default {
     // 关联权限
     getUserPrivileges () {
       this.authLoading = true
-      getRoleModules(this.activeRole.id).then(res => {
+      getRolePrivileges(this.activeRole.id).then(res => {
         this.authLoading = false
-        this.privilegeList = res
+        var tempList = res.map(item => {
+          return item.id
+        })
+        this.privilegeList = tempList
       })
     },
     saveUsePrivileges (data) {
       this.privilegeList = data
       this.authLoading = true
-      addRoleModule(this.activeRole.id, this.privilegeList).then(res => {
+      addRolePrivilege(this.activeRole.id, this.privilegeList).then(res => {
         this.authLoading = false
         if (res) {
           saveSuccessToast()
         }
       })
-    },
-    // 关联用户
-    handleCancel () {
-      this.visible = false
-    },
-    handleConfirm () {
-      this.visible = false
-      this.userLoading = true
-      addRoleUser(this.activeRole.id, this.selectedUsers).then(res => {
-        this.userLoading = false
-        if (res) {
-          saveSuccessToast()
-        }
-      })
-    },
-    checkoutChange (data) {
-      this.selectedUsers = data.value
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../styles/table.scss';
 .wrapper {
   height: 100%;
   box-sizing: border-box;
@@ -293,10 +255,21 @@ export default {
   bottom: 0;
   right: 0;
   .auth-box {
-    padding: 0 17px;
   }
   .user-box {
     overflow: hidden;
+  }
+  .org-container {
+    min-height: 34px;
+    margin: 3px 0;
+    position: relative;
+    border-radius: 3px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    color: #333333;
+    padding: 0.5px;
+    line-height: 15px;
+    overflow-y: auto;
   }
 }
 
@@ -340,21 +313,6 @@ export default {
   .item-hover {
     background: #ebf3ff;
     border-right: 2px solid #46cdcf;
-  }
-}
-
-.handle-box {
-  color: #333;
-  font-size: 12px;
-  .handle-item {
-    padding-bottom: 15px;
-    .handle-item-name {
-      flex-shrink: 0;
-      width: 90px;
-    }
-    .handle-item-content {
-      flex: 1;
-    }
   }
 }
 

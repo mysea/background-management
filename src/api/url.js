@@ -35,8 +35,8 @@ const URL = {
   ADD_ROLE: urlHandle('/api/Common_Role'),
   UPDATE_ROLE: urlHandle('/api/Common_Role'),
   DELETE_ROLE: urlHandle('/api/Common_Role'),
-  GET_ROLE_MODULES: urlHandle('/api/Common_Role'),
-  ADD_ROLE_MODULE: urlHandle('/api/Common_Role'),
+  GET_ROLE_PRIVILEGES: urlHandle('/api/Common_Role'),
+  ADD_ROLE_PRIVILEGE: urlHandle('/api/Common_Role'),
   GET_ROLE_USERS: urlHandle('/api/Common_Role'),
   ADD_ROLE_USER: urlHandle('/api/Common_Role'),
   // 字典管理
