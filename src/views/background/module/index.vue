@@ -62,13 +62,10 @@
     <!-- 模块 -->
     <el-dialog :title="dialogTitle"
       :visible.sync="isShowDialog"
-      v-if="isShowDialog"
       width="40%"
-      :close-on-click-modal="false"
-      :modal-append-to-body="true"
       v-loading="dialogLoading"
-      :append-to-body="true"
-      :before-close="closeDialog">
+      :close-on-click-modal="false"
+      @close="closeDialog">
       <el-form
         :model="moduleForm"
         :rules="moduleFormRules"
@@ -100,13 +97,10 @@
     <!-- 权限 -->
     <el-dialog title="新建"
       :visible.sync="isShowAuthDialog"
-      v-if="isShowAuthDialog"
       width="40%"
-      :close-on-click-modal="false"
-      :modal-append-to-body="true"
       v-loading="dialogLoading"
-      :append-to-body="true"
-      :before-close="closeDialog">
+      :close-on-click-modal="false"
+      @close="closeAuthDialog">
       <el-form
         :model="priviledgeForm"
         :rules="priviledgeFormRules"
@@ -244,7 +238,6 @@ export default {
     },
     handleClick (type, row) {
       if (type === 'delete') {
-        console.log(row)
         deleteConfirm().then(() => {
           deletePrivilege(row.id).then(res => {
             if (res) {
@@ -267,7 +260,6 @@ export default {
                 _this.dialogLoading = false
                 if (res) {
                   _this.isShowDialog = false
-                  _this.resetForm('moduleForm')
                   saveSuccessToast()
                   _this.getModuleList()
                 }
@@ -278,19 +270,17 @@ export default {
                 _this.dialogLoading = false
                 if (res) {
                   _this.isShowDialog = false
-                  _this.resetForm('moduleForm')
                   saveSuccessToast()
                   _this.getModuleList()
                 }
               })
             }
           } else {
-            if (_this.module_id) {  
+            if (_this.module_id) { 
               _this.priviledgeForm.module_id = _this.module_id
               addPrivilege(_this.priviledgeForm).then(res => {
                 if (res) {
                   _this.isShowAuthDialog = false
-                  _this.resetForm('priviledgeForm')
                   saveSuccessToast()
                   _this.getList()
                 }
@@ -304,7 +294,11 @@ export default {
     },
     closeDialog () {
       this.isShowDialog = false
+      this.resetForm('moduleForm')
+    },
+    closeAuthDialog () {
       this.isShowAuthDialog = false
+      this.resetForm('priviledgeForm')
     },
     resetForm (formName) {
       if (formName === 'moduleForm') {  

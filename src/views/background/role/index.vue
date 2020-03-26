@@ -46,13 +46,10 @@
     <!-- 新建或编辑 -->
     <el-dialog :title="dialogTitle"
       :visible.sync="isShowDialog"
-      v-if="isShowDialog"
       width="40%"
-      :close-on-click-modal="false"
-      :modal-append-to-body="true"
       v-loading="dialogLoading"
-      :append-to-body="true"
-      :before-close="closeDialog">
+      :close-on-click-modal="false"
+      @close="closeDialog">
       <el-form
         :model="roleForm"
         :rules="roleFormRules"
@@ -169,7 +166,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('roleForm')
                 saveSuccessToast()
                 _this.getRoleList()
               }
@@ -180,7 +176,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('roleForm')
                 saveSuccessToast()
                 _this.getRoleList()
               }
@@ -193,6 +188,7 @@ export default {
     },
     closeDialog () {
       this.isShowDialog = false
+      this.resetForm('roleForm')
     },
     resetForm (formName) {
       this.roleForm = {

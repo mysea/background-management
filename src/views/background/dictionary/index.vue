@@ -38,13 +38,10 @@
     <!-- 新建或编辑 -->
     <el-dialog :title="dialogTitle"
       :visible.sync="isShowDialog"
-      v-if="isShowDialog"
       width="40%"
-      :close-on-click-modal="false"
-      :modal-append-to-body="true"
       v-loading="dialogLoading"
-      :append-to-body="true"
-      :before-close="closeDialog">
+      :close-on-click-modal="false"
+      @close="closeDialog">
       <el-form
         :model="dictionaryForm"
         :rules="dictionaryFormRules"
@@ -145,7 +142,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('dictionaryForm')
                 saveSuccessToast()
                 _this.getList()
               }
@@ -156,7 +152,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('dictionaryForm')
                 saveSuccessToast()
                 _this.getList()
               }
@@ -169,6 +164,7 @@ export default {
     },
     closeDialog () {
       this.isShowDialog = false
+      this.resetForm('dictionaryForm')
     },
     resetForm (formName) {
       this.dictionaryForm = {

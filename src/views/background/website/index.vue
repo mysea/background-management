@@ -42,13 +42,10 @@
     <!-- 新建或编辑 -->
     <el-dialog :title="dialogTitle"
       :visible.sync="isShowDialog"
-      v-if="isShowDialog"
       width="40%"
-      :close-on-click-modal="false"
-      :modal-append-to-body="true"
       v-loading="dialogLoading"
-      :append-to-body="true"
-      :before-close="closeDialog">
+      :close-on-click-modal="false"
+      @close="closeDialog">
       <el-form
         :model="websiteForm"
         :rules="websiteFormRules"
@@ -113,9 +110,6 @@ export default {
     newWebsite () {
       this.isShowDialog = true
       this.dialogTitle = '新建'
-      this.$nextTick(function () {
-        this.resetForm('websiteForm')
-      })
     },
     handleClick (type, row) {
       if (type === 'edit') {
@@ -127,6 +121,7 @@ export default {
     },
     closeDialog () {
       this.isShowDialog = false
+      this.resetForm('websiteForm')
     },
     submitForm (formName) {
       var _this = this
@@ -139,7 +134,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('websiteForm')
                 saveSuccessToast()
                 _this.getList()
               }
@@ -150,7 +144,6 @@ export default {
               _this.dialogLoading = false
               if (res) {
                 _this.isShowDialog = false
-                _this.resetForm('websiteForm')
                 saveSuccessToast()
                 _this.getList()
               }
