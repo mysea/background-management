@@ -49,6 +49,7 @@ export default {
         request = getDictionarys(params)
       } else if (_this.type === 'user') {
         params.departmentid = this.departmentid
+        params.showNodes = this.showNodes
         request = getUsers(params)
       } else if (_this.type === 'priviledge') {
         params.module_id = this.module_id

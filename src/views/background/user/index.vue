@@ -7,7 +7,8 @@
 
     <!-- 右边内容 -->
     <div class="content">
-      <search-box></search-box>
+        <div class="table-top">
+        </div>
       <el-table
         stripe
         v-loading="loading"
@@ -49,7 +50,6 @@
 import ChangePassword from '@/components/ChangePassword'
 import RelateRoles from './RelateRoles'
 import DepartmentTree from './DepartmentTree'
-import SearchBox from '@/components/SearchBox'
 import {
   getUserRoles,
   addUserRole
@@ -63,13 +63,13 @@ export default {
   components: {
     ChangePassword,
     RelateRoles,
-    DepartmentTree,
-    SearchBox
+    DepartmentTree
   },
   data () {
     return {
       type: 'user',
       departmentid: '',
+      showNodes: false,
       currentUserId: '',
       // 修改密码
       showPasswordDiaolog: false,
@@ -82,8 +82,9 @@ export default {
     this.getList()
   },
   methods: {
-    clickDepartment (id) {
-      this.departmentid = id
+    clickDepartment (data) {
+      this.departmentid = data.id
+      this.showNodes = data.checked
       this.getList()
     },
     handleClick (type, row) {
@@ -147,5 +148,8 @@ export default {
   left: 210px;
   bottom: 0;
   right: 0;
+}
+.table-top {
+  height: 50px;
 }
 </style>

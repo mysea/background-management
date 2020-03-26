@@ -1,10 +1,15 @@
 <template>
   <div class="nav-box" v-loading="navLoading">
     <el-tree
-      :data="treeList"
+      lazy
+      ref="tree"
+      :props="props"
+      :load="loadNode"
       node-key="id"
       @node-click="handleNodeClick"
-      :expand-on-click-node="false"
+      show-checkbox
+      :check-strictly="checkStrickly"
+      @check-change="handleCheckChange"
       highlight-current></el-tree>
   </div>
 </template>
@@ -16,28 +21,37 @@ export default {
   data () {
     return {
       navLoading: false,
-      treeList: []
+      checkStrickly: true,
+      props: {
+        label: 'name',
+        children: 'zones'
+      }
     }
   },
-  mounted () {
-    this.getOrgList()
-  },
   methods: {
-    getOrgList () {
+    handleNodeClick (data) {
+      this.$emit('click', { id: data.id, checked: true })
+    },
+    handleCheckChange(data, checked, indeterminate) {
+      if (checked) {
+        this.$emit('click', { id: data.id, checked: false })
+      }
+    },
+    loadNode (node, resolve) {
       let data = {
         pageIndex: 1,
-        pagesize: 10000
+        pagesize: 10000,
+        parentid: node.level === 0 ? 1 : node.data.id
       }
-      this.navLoading = true
       getOrgs(data).then(res => {
-        let data = res.list
-        data.unshift({ departmentname: '广电运通（集团）', departmentid: 1, parentid: 0 })
-        this.treeList = getTree(data, 1)
-        this.navLoading = false
+        let tempList = res.list.map(item => {
+          return {
+            name: item.departmentname,
+            id: item.departmentid
+          }
+        })
+        resolve(tempList)
       })
-    },
-    handleNodeClick (data) {
-      this.$emit('click', data.id)
     }
   }
 }
