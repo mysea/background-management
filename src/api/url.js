@@ -6,6 +6,11 @@ function urlHandle (url) {
 
 const URL = {
   // 后台管理
+  // 站点管理
+  GET_WEBSITES: urlHandle('/api/Common_WebSite'),
+  ADD_WEBSITE: urlHandle('/api/Common_WebSite'),
+  UPDATE_WEBSITE: urlHandle('/api/Common_WebSite'),
+  DELETE_WEBSITE: urlHandle('/api/Common_WebSite'),
   // 用户管理
   LOGIN: urlHandle('/api/Common_User'),
   GET_USERS: urlHandle('/api/Common_User'),
@@ -32,6 +37,7 @@ const URL = {
   DELETE_ROLE: urlHandle('/api/Common_Role'),
   GET_ROLE_MODULES: urlHandle('/api/Common_Role'),
   ADD_ROLE_MODULE: urlHandle('/api/Common_Role'),
+  GET_ROLE_USERS: urlHandle('/api/Common_Role'),
   ADD_ROLE_USER: urlHandle('/api/Common_Role'),
   // 字典管理
   GET_DICTIONARYS: urlHandle('/api/Common_Dictionary'),

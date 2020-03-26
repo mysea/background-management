@@ -1,47 +1,191 @@
 <template>
-  <div>
-    <h1>{{ $route.meta.title }}</h1>
-    <el-button type="primary" @click="createClick">新建</el-button>
-    <el-button type="primary" @click="detailClick">详情</el-button>
-    <create-view
-      v-if="isCreate"
-      :type="type"
-      :info="createInfo"
-      @hiden-view="isCreate = false"></create-view>
-    <detail-view
-      v-if="showDetail"
-      @hide-view="showDetail = false"></detail-view>
+  <div class="content">
+    <div class="table-top">
+      <el-button type="primary" class="table-top-button" @click="newWebsite">新建站点</el-button>
+    </div>
+    <el-table
+      v-loading="loading"
+      ref="table"
+      :data="list"
+      :height="tableHeight"
+      @row-click="handleRowClick"
+      @sort-change="sortChange"
+      @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column prop="name" label="站点名称" show-overflow-tooltip fixed></el-table-column>
+      <el-table-column prop="description" label="站点描述" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="home_url" label="首页url" show-overflow-tooltip></el-table-column>
+      <el-table-column fixed="right" label="是否启用" width="150">
+        <template slot-scope="scope">
+          <el-tag size="small" v-if="scope.row.status === 1">启用</el-tag>
+          <el-tag type="danger" size="small" v-else>停用</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" width="150">
+        <template slot-scope="scope">
+          <el-button @click="handleClick('edit', scope.row)" type="text" size="small">编辑</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="p-container">
+      <el-pagination class="p-bar"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="pageSizes"
+        :page-size.sync="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </div>
+
+    <!-- 新建或编辑 -->
+    <el-dialog :title="dialogTitle"
+      :visible.sync="isShowDialog"
+      v-if="isShowDialog"
+      width="40%"
+      :close-on-click-modal="false"
+      :modal-append-to-body="true"
+      v-loading="dialogLoading"
+      :append-to-body="true"
+      :before-close="closeDialog">
+      <el-form
+        :model="websiteForm"
+        :rules="websiteFormRules"
+        ref="websiteForm"
+        label-width="80px"
+        label-position="right">
+        <el-form-item label="站点名称" prop="name">
+          <el-input v-model="websiteForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="站点描述" prop="description">
+          <el-input v-model="websiteForm.description"></el-input>
+        </el-form-item>
+        <el-form-item label="首页url" prop="home_url">
+          <el-input v-model="websiteForm.home_url"></el-input>
+        </el-form-item>
+        <el-form-item label="是否启用" prop="status">
+          <el-switch v-model="websiteForm.status"></el-switch>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button type="primary" @click="submitForm('websiteForm')">保 存</el-button>
+        <el-button @click="isShowDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import createView from './createView'
-import detailView from './detailView'
+import {
+  addWebsite,
+  updateWebsite,
+  deleteWebsite
+} from '@/api/background'
+import {
+  saveSuccessToast,
+  deleteSuccessToast,
+  deleteConfirm
+  } from '@/utils/toast'
+import table from '../mixins/table'
 export default {
-  components: {
-    createView,
-    detailView
-  },
+  mixins: [table],
   data () {
     return {
       type: 'website',
-      isCreate: false,
-      createInfo: { type: 'save' },
-      showDetail: false
+      //新建或编辑
+      dialogTitle: '',
+      isShowDialog: false,
+      dialogLoading: false,
+      websiteForm: {
+        name: '',
+        description: '',
+        home_url: '',
+        status: 0
+      },
+      websiteFormRules: {}
     }
   },
+  created () {
+    this.getList()
+  },
   methods: {
-    createClick () {
-      this.createInfo = { type: 'save' }
-      this.isCreate = !this.isCreate
+    newWebsite () {
+      this.isShowDialog = true
+      this.dialogTitle = '新建'
+      this.$nextTick(function () {
+        this.resetForm('websiteForm')
+      })
     },
-    detailClick () {
-      this.showDetail = !this.showDetail
+    handleClick (type, row) {
+      if (type === 'edit') {
+        this.isShowDialog = true
+        this.dialogTitle = '编辑'
+        this.websiteForm = JSON.parse(JSON.stringify(row))
+        this.websiteForm.status = this.websiteForm.status === 1
+      }
+    },
+    closeDialog () {
+      this.isShowDialog = false
+    },
+    submitForm (formName) {
+      var _this = this
+      _this.$refs[formName].validate(valid => {
+        if (valid) {
+          _this.websiteForm.status = _this.websiteForm.status ? 1 : 0
+          if (_this.dialogTitle === '新建') {
+            _this.dialogLoading = true
+            addWebsite(_this.websiteForm).then(res => {
+              _this.dialogLoading = false
+              if (res) {
+                _this.isShowDialog = false
+                _this.resetForm('websiteForm')
+                saveSuccessToast()
+                _this.getList()
+              }
+            })
+          } else {
+            _this.dialogLoading = true
+            updateWebsite(_this.websiteForm.id, _this.websiteForm).then(res => {
+              _this.dialogLoading = false
+              if (res) {
+                _this.isShowDialog = false
+                _this.resetForm('websiteForm')
+                saveSuccessToast()
+                _this.getList()
+              }
+            })
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    resetForm (formName) {
+      this.websiteForm = {
+        name: '',
+        description: '',
+        home_url: '',
+        status: 0
+      }
+      this.$refs[formName].resetFields()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+@import '../styles/table.scss';
+.content {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+}
+.table-top {
+  height: 50px;
+  .table-top-button {
+    float: right;
+    margin-right: 20px;
+    margin-top: 10px;
+  }
+}
 </style>

@@ -2,7 +2,24 @@ import request from '@/utils/request'
 import { param } from '@/utils'
 import URL from './url'
 
-// 用户管理
+// 站点管理
+export function getWebsites (data) {
+  return request.get(`${URL.GET_WEBSITES}?${param(data)}`)
+}
+
+export function addWebsite (data) {
+  return request.post(URL.ADD_WEBSITE, data)
+}
+
+export function updateWebsite (id, data) {
+  return request.put(`${URL.UPDATE_WEBSITE}/${id}`, data)
+}
+
+export function deleteWebsite (id) {
+  return request.delete(`${URL.DELETE_WEBSITE}/${id}`)
+}
+
+// 部门管理
 export function getOrgs (data) {
   return request.get(`${URL.GET_ORGS}?${param(data)}`)
 }
@@ -68,6 +85,10 @@ export function getRoleModules (id) {
 
 export function addRoleModule (id, data) {
   return request.post(`${URL.ADD_ROLE_MODULE}/${id}/Common_Privilege`, data)
+}
+
+export function getRoleUsers (id) {
+  return request.get(`${URL.GET_ROLE_USERS}/${id}/Common_User`)
 }
 
 export function addRoleUser (id, data) {
