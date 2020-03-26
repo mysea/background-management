@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="table-top">
-      <el-button type="primary" class="table-top-button" @click="visible = true">关联用户</el-button>
+      <el-button type="primary" class="table-top-button" @click="relateUser">关联用户</el-button>
     </div>
     <el-table
       stripe
@@ -97,19 +97,32 @@ export default {
   },
   methods: {
     // 关联用户
+    relateUser () {
+      if (!this.role.id) {
+        this.$message.warning('请先选择角色')
+        return
+      }
+      this.visible = true
+    },
     handleCancel () {
       this.visible = false
     },
     handleConfirm () {
       this.visible = false
-      addRoleUser(this.role.id, this.selectedUsers).then(res => {
-        if (res) {
-          saveSuccessToast()
-          this.getList()
-        }
+      var userIdList = this.selectedUsers.map(item => {
+        return item.id
       })
+      if (userIdList.length) {
+        addRoleUser(this.role.id, userIdList).then(res => {
+          if (res) {
+            saveSuccessToast()
+            this.getList()
+          }
+        })
+      }
     },
     checkoutChange (data) {
+      console.log(this.selectedUsers)
       this.selectedUsers = data.value
     }
   }

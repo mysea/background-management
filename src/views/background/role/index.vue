@@ -208,6 +208,10 @@ export default {
       })
     },
     saveUsePrivileges (data) {
+      if (!this.activeRole.id) {
+        this.$message.warning('请先选择角色')
+        return
+      }
       this.privilegeList = data
       this.authLoading = true
       addRolePrivilege(this.activeRole.id, this.privilegeList).then(res => {

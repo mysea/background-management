@@ -234,6 +234,10 @@ export default {
     },
     // 权限操作
     newAuth () {
+      if (!this.module_id) {
+        this.$message.warning('请先选择模块')
+        return
+      }
       this.isShowAuthDialog = true
     },
     handleClick (type, row) {
