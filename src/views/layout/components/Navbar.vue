@@ -22,6 +22,10 @@
     </div>
 
     <div class="lang">
+      <Website></Website>
+    </div>
+
+    <div class="lang">
       <Lang></Lang>
     </div>
 
@@ -51,9 +55,11 @@
 import { mapGetters } from 'vuex'
 import { removeAuth } from '@/utils/auth'
 import Lang from '@/components/lang'
+import Website from '@/components/website'
 export default {
   components: {
-    Lang
+    Lang,
+    Website
   },
   data () {
     return {
