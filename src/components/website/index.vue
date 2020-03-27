@@ -42,12 +42,12 @@ export default {
           }
         })
         this.websiteName = this.websiteList[0]['label']
-        this.$store.commit('SET_WEBSITE_ID', this.websiteList[0]['value'])
+        this.$store.commit('SET_WEBSITE', this.websiteList[0])
       })
     },
     switchwebsite (item) {
       this.websiteName = item.label
-      this.$store.commit('SET_WEBSITE_ID', item.value)
+      this.$store.commit('SET_WEBSITE', item)
     }
   }
 }

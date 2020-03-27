@@ -16,10 +16,11 @@
               <el-button type="text" size="mini" @click="() => append(node, data)">
                 <i class="el-icon-plus"></i>
               </el-button>
-              <el-button type="text" size="mini" @click="() => edit(node, data)">
+              <!-- 根节点是站点名字，只能新建，可以根据node.level === 1或data.id是否为null进行判断 -->
+              <el-button type="text" size="mini" @click="() => edit(node, data)" v-show="data.id">
                 <i class="el-icon-edit"></i>
               </el-button>              
-              <el-button type="text" size="mini" @click="() => remove(node, data)">
+              <el-button type="text" size="mini" @click="() => remove(node, data)" v-show="data.id">
                 <i class="el-icon-close"></i>  
               </el-button>              
             </div>
@@ -78,8 +79,8 @@
         <el-form-item label="模块名称" prop="name">
           <el-input v-model="moduleForm.name"></el-input>
         </el-form-item>
-        <el-form-item label="模块标识" prop="name_code">
-          <el-input v-model="moduleForm.name_code"></el-input>
+        <el-form-item label="模块标识" prop="code">
+          <el-input v-model="moduleForm.code"></el-input>
         </el-form-item>
         <el-form-item label="模块路径" prop="url">
           <el-input v-model="moduleForm.url"></el-input>
@@ -140,6 +141,7 @@ import {
   deleteSuccessToast,
   deleteConfirm
   } from '@/utils/toast'
+import { mapGetters } from 'vuex'
 import { createTree } from '@/utils'
 import table from '../mixins/table'
 export default {
@@ -157,7 +159,7 @@ export default {
       dialogLoading: false,
       moduleForm: {
         name: '',
-        name_code: '',
+        code: '',
         url: '',
         icon_name: '',
         sort_num: 0,
@@ -167,12 +169,12 @@ export default {
         name: [
           { required: true, message: '请输入模块名称', trigger: 'blur' }
         ],
-        name_code: [
+        code: [
           { required: true, message: '请输入模块标识', trigger: 'blur' }
-        ],
-        url: [
-          { required: true, message: '请输入模块路径', trigger: 'blur' }
         ]
+        // url: [
+        //   { required: true, message: '请输入模块路径', trigger: 'blur' }
+        // ]
       },
       // 权限表单
       isShowAuthDialog: false,
@@ -193,24 +195,38 @@ export default {
   created () {
     this.getModuleList()
   },
+  computed: {
+    ...mapGetters([
+      'website'
+    ])
+  },
+  watch: {
+    website () {
+      this.getModuleList()
+    }
+  },
   methods: {
     // 模块操作
     getModuleList () {
       let data = {
         pageIndex: 1,
-        pagesize: 1000
+        pagesize: 1000,
+        website_id: this.website.value
       }
       this.navLoading = true
       getModules(data).then(res => {
         let data = res.list
-        data.push({ name: '项目协同平台', id: null, parent_id: '0' })
+        // 根节点是站点名字
+        data.push({ name: this.website.label, id: null, parent_id: '0' })
         this.treeList = createTree(data, '0')
         this.navLoading = false
       })
     },
     handleNodeClick (data) {
-      this.module_id = data.id
-      this.getList()
+      if (data.id) { // 点击的是非根节点时才去获取权限列表
+        this.module_id = data.id
+        this.getList()
+      }
     },
     append (node, data) {
       this.isShowDialog = true
@@ -262,7 +278,8 @@ export default {
         if (valid) {
           if (formName === 'moduleForm') {
             if (_this.dialogTitle === '新建') {
-              _this.dialogLoading = true  
+              _this.dialogLoading = true
+              _this.moduleForm.website_id = _this.website.value
               addModule(_this.moduleForm).then(res => {
                 _this.dialogLoading = false
                 if (res) {
@@ -311,7 +328,7 @@ export default {
       if (formName === 'moduleForm') {  
         this.moduleForm = {
           name: '',
-          name_code: '',
+          code: '',
           url: '',
           icon_name: '',
           sort_num: 0,

@@ -1,7 +1,7 @@
 const getters = {
   activeIndex: state => state.app.sidebar.activeIndex,
   navActiveIndex: state => state.app.navbar.activeIndex,
-  websiteId: state => state.app.websiteId,
+  website: state => state.app.website,
   // 路由
   filterRouter: state => state.permission.filterRouter,
   backgroundRouter: state => state.permission.backgroundRouter,

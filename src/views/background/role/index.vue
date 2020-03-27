@@ -77,6 +77,7 @@ import {
   getRolePrivileges,
   addRolePrivilege
 } from '@/api/background'
+import { mapGetters } from 'vuex'
 import {
   saveSuccessToast,
   deleteSuccessToast,
@@ -116,11 +117,22 @@ export default {
   created () {
     this.getRoleList()
   },
+  computed: {
+    ...mapGetters([
+      'website'
+    ])
+  },
+  watch: {
+    website () {
+      this.getRoleList()
+    }
+  },
   methods: {
     getRoleList () {
       let data = {
         pageIndex: 1,
-        pagesize: 1000
+        pagesize: 1000,
+        website_id: this.website.value
       }
       this.navLoading = true
       getRoles(data).then(res => {
@@ -162,6 +174,7 @@ export default {
         if (valid) {
           if (_this.dialogTitle === '新建') {
             _this.dialogLoading = true
+            _this.roleForm.website_id = _this.website.value
             addRole(_this.roleForm).then(res => {
               _this.dialogLoading = false
               if (res) {
