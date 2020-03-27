@@ -1,7 +1,12 @@
-.table-container {
-  background-color: white;
-  border: 1px solid #E6E6E6;
-  border-radius: 2px;
+.table-top {
+  height: 54px;
+  padding: 10px 10px 0;
+  .search {
+    width: 300px;
+  }
+  .table-top-button {
+    float: right;
+  }
 }
 
 .el-table {
@@ -21,7 +26,6 @@
 
 .p-container {
   position: relative;
-  background-color: white;
   height: 44px;
   .p-bar {
     float: right;

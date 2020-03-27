@@ -7,8 +7,11 @@
 
     <!-- 右边内容 -->
     <div class="content">
-        <div class="table-top">
-        </div>
+      <div class="table-top">
+        <el-input placeholder="搜索姓名" v-model="searchInput" class="search" clearable @clear="getList">
+          <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+        </el-input>
+      </div>
       <el-table
         stripe
         v-loading="loading"
@@ -148,8 +151,5 @@ export default {
   left: 210px;
   bottom: 0;
   right: 0;
-}
-.table-top {
-  height: 50px;
 }
 </style>

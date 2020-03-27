@@ -9,6 +9,7 @@ export default {
   data () {
     return {
       loading: false,
+      searchInput: '', // 搜索框文本
       tableHeight: document.documentElement.clientHeight - this.getConstHeight(),
       list: [],
       selectionsList: [],
@@ -46,17 +47,21 @@ export default {
       }
       var request = null
       if (_this.type === 'dictionary') {
+        params.code = this.searchInput
         request = getDictionarys(params)
       } else if (_this.type === 'user') {
+        params.employeename = this.searchInput
         params.departmentid = this.departmentid
         params.showNodes = this.showNodes
         request = getUsers(params)
       } else if (_this.type === 'priviledge') {
+        params.name = this.searchInput
         params.module_id = this.module_id
         request = getPrivileges(params)
       } else if (_this.type === 'roleUser') {
         request = getRoleUsers(this.role.id)
       } else if (_this.type === 'website') {
+        params.name = this.searchInput
         request = getWebsites(params)
       }
       if (_this.type === 'roleUser') {

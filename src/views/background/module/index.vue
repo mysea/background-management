@@ -30,6 +30,9 @@
       <!-- 右边内容 -->
       <div class="content">
         <div class="table-top">
+          <el-input placeholder="搜索权限名称" v-model="searchInput" class="search" clearable @clear="getList">
+            <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+          </el-input>
           <el-button type="primary" class="table-top-button" @click="newAuth">新建权限</el-button>
         </div>
         <el-table
@@ -355,14 +358,6 @@ export default {
   left: 210px;
   bottom: 0;
   right: 0;
-}
-.table-top {
-  height: 50px;
-  .table-top-button {
-    float: right;
-    margin-right: 20px;
-    margin-top: 10px;
-  }
 }
 
 /** 树形结构 */

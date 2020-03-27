@@ -1,6 +1,9 @@
 <template>
   <div class="content">
     <div class="table-top">
+      <el-input placeholder="搜索站点名称" v-model="searchInput" class="search" clearable @clear="getList">
+        <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+      </el-input>
       <el-button type="primary" class="table-top-button" @click="newWebsite">新建站点</el-button>
     </div>
     <el-table
@@ -11,17 +14,16 @@
       @row-click="handleRowClick"
       @sort-change="sortChange"
       @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="name" label="站点名称" show-overflow-tooltip fixed></el-table-column>
+      <el-table-column prop="name" label="站点名称" show-overflow-tooltip></el-table-column>
       <el-table-column prop="description" label="站点描述" show-overflow-tooltip></el-table-column>
       <el-table-column prop="home_url" label="首页url" show-overflow-tooltip></el-table-column>
-      <el-table-column fixed="right" label="是否启用" width="150">
+      <el-table-column label="是否启用" width="150">
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.status === 1">启用</el-tag>
           <el-tag type="danger" size="small" v-else>停用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="150">
+      <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button @click="handleClick('edit', scope.row)" type="text" size="small">编辑</el-button>
         </template>
@@ -172,13 +174,5 @@ export default {
 .content {
   background: #fff;
   border: 1px solid #e6e6e6;
-}
-.table-top {
-  height: 50px;
-  .table-top-button {
-    float: right;
-    margin-right: 20px;
-    margin-top: 10px;
-  }
 }
 </style>

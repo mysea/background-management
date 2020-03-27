@@ -3,6 +3,9 @@
     <div class="container">
       <div class="content">
         <div class="table-top">
+          <el-input placeholder="搜索字典标识" v-model="searchInput" class="search" clearable @clear="getList">
+            <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+          </el-input>
           <el-button type="primary" class="table-top-button" @click="newDictionary">新建字典</el-button>
         </div>
         <el-table
@@ -200,13 +203,5 @@ export default {
   left: 0;
   bottom: 0;
   right: 0;
-}
-.table-top {
-  height: 50px;
-  .table-top-button {
-    float: right;
-    margin-right: 20px;
-    margin-top: 10px;
-  }
 }
 </style>
