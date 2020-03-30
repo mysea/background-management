@@ -27,6 +27,11 @@ export default {
   },
   created () {
     this.getWebsiteList()
+    // 站点管理新建站点后刷新数据
+    this.$bus.on('updateWebsite', this.getWebsiteList)
+  },
+  beforeDestroy () {
+    this.$bus.off('updateWebsite', this.getWebsiteList)
   },
   methods: {
     getWebsiteList () {

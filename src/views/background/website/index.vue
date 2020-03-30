@@ -135,6 +135,8 @@ export default {
             addWebsite(_this.websiteForm).then(res => {
               _this.dialogLoading = false
               if (res) {
+                // 通知选择站点组件更新数据
+                _this.$bus.emit('updateWebsite', '')
                 _this.isShowDialog = false
                 saveSuccessToast()
                 _this.getList()
@@ -145,6 +147,8 @@ export default {
             updateWebsite(_this.websiteForm.id, _this.websiteForm).then(res => {
               _this.dialogLoading = false
               if (res) {
+                // 通知选择站点组件更新数据
+                _this.$bus.emit('updateWebsite', '')
                 _this.isShowDialog = false
                 saveSuccessToast()
                 _this.getList()

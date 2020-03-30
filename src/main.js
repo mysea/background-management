@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueBus from 'vue-bus'
 
 import 'normalize.css/normalize.css'
 
@@ -21,6 +22,7 @@ import { Flexbox, FlexboxItem } from '@/components/flexbox'
 
 import '@/permission'
 
+Vue.use(VueBus)
 Vue.use(VueI18n)
 Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
