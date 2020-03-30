@@ -3,7 +3,7 @@ import { param } from '@/utils'
 import URL from './url'
 
 export function login (data) {
-  return request.post(`${URL.LOGIN}/${data.employeeid}?password=${data.password}`)
+  return request.get(`${URL.LOGIN}/${data.employeeid}?password=${data.password}`)
 }
 
 export function getUsers (data) {

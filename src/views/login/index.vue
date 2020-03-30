@@ -73,9 +73,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'login',
-      'getAuth',
-      'getUserInfo'
+      'login'
     ]),
     handleLogin () {
       var _this = this

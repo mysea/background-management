@@ -52,8 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { removeAuth } from '@/utils/auth'
+import { mapGetters, mapActions } from 'vuex'
 import Lang from '@/components/lang'
 import Website from '@/components/website'
 export default {
@@ -95,6 +94,9 @@ export default {
     this.navIndexChild = this.navIndex
   },
   methods: {
+    ...mapActions([
+      'logout'
+    ]),
     filterAuth (authInfo) {
       var result = false
       for (var i in authInfo) {
@@ -118,7 +120,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          removeAuth()
+          _this.logout()
           location.reload()
         }).catch(() => {})
       } else if (type === 'person') {

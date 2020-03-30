@@ -1,7 +1,7 @@
 import router from './router'
 import store from './store'
 import NProgress from 'nprogress'
-import { getAuth } from '@/utils/auth'
+import Lockr from 'lockr'
 
 let loadAsyncRouter = false
 const whiteList = ['/login']
@@ -18,7 +18,7 @@ const whiteList = ['/login']
 //    重定向到login页
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (getAuth()) {
+  if (Lockr.get('Authorization')) {
     if (to.path === 'login') {
       next({ path: '/' })
       NProgress.done()

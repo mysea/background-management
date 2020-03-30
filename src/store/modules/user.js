@@ -1,5 +1,4 @@
-
-import { addAuth, removeAuth } from '@/utils/auth'
+import Lockr from 'lockr'
 import { login } from '@/api/user'
 
 const user = {
@@ -26,7 +25,9 @@ const user = {
     login ({ commit }, data) {
       return new Promise((resolve, reject) => {
         login(data).then(res => {
-          addAuth('Admin-Token')
+          if (res) {
+            Lockr.set('Authorization', res)
+          }
           resolve(res)
         }).catch(err => {
           reject(err)
@@ -43,7 +44,7 @@ const user = {
     },
     logout ({ commit }) {
       return new Promise((resolve, reject) => {
-        removeAuth()
+        Lockr.rm('Authorization')
         resolve()
       })
     }

@@ -1,7 +1,11 @@
 import axios from 'axios'
+import Lockr from 'lockr'
 
 const http = axios.create({
-  timeout: 15 * 1000
+  timeout: 15 * 1000,
+  headers: {
+    Authorization: 'Bearer ' + Lockr.get('Authorization')
+  }
 })
 
 http.interceptors.request.use(
