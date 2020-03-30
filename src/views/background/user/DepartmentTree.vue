@@ -62,5 +62,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+.nav-box {
+  line-height: 30px;
+  overflow-y: auto;
+  padding: 5px 0 20px 0;
+  height: 100%;
+}
 </style>
