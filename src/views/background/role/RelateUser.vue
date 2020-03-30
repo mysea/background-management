@@ -11,10 +11,18 @@
       :height="tableHeight">
       <el-table-column prop="employeeid" show-overflow-tooltip label="工号"></el-table-column>
       <el-table-column prop="employeename" show-overflow-tooltip label="姓名"></el-table-column>
-      <el-table-column prop="sex" show-overflow-tooltip label="性别"></el-table-column>
+      <el-table-column prop="sex" show-overflow-tooltip label="性别">
+        <template slot-scope="scope">
+          {{ scope.row.sex === '2' ? '男' : '女' }}
+        </template>
+      </el-table-column>
       <el-table-column prop="phone" show-overflow-tooltip label="手机"></el-table-column>
       <el-table-column prop="email" show-overflow-tooltip label="邮箱"></el-table-column>
-      <el-table-column prop="employeestatus" show-overflow-tooltip label="状态"></el-table-column>
+      <el-table-column prop="employeestatus" show-overflow-tooltip label="状态">
+        <template slot-scope="scope">
+          {{ scope.row.employeestatus === 0 ? '停用' : '启用' }}
+        </template>
+      </el-table-column>
     </el-table>
     <div class="p-container">
       <el-pagination class="p-bar"
@@ -143,14 +151,6 @@ export default {
     .handle-item-content {
       flex: 1;
     }
-  }
-}
-.table-top {
-  height: 50px;
-  .table-top-button {
-    float: right;
-    margin-right: 20px;
-    margin-top: 10px;
   }
 }
 </style>

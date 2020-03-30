@@ -20,10 +20,18 @@
         :height="tableHeight">
         <el-table-column prop="employeeid" show-overflow-tooltip label="工号"></el-table-column>
         <el-table-column prop="employeename" show-overflow-tooltip label="姓名"></el-table-column>
-        <el-table-column prop="sex" show-overflow-tooltip label="性别"></el-table-column>
+        <el-table-column prop="sex" show-overflow-tooltip label="性别">
+          <template slot-scope="scope">
+            {{ scope.row.sex === '2' ? '男' : '女' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="phone" show-overflow-tooltip label="手机"></el-table-column>
-        <el-table-column prop="email" show-overflow-tooltip label="邮箱"></el-table-column>
-        <el-table-column prop="employeestatus" show-overflow-tooltip label="状态"></el-table-column>
+        <el-table-column prop="email" show-overflow-tooltip label="邮箱" width="200"></el-table-column>
+        <el-table-column prop="employeestatus" show-overflow-tooltip label="状态">
+          <template slot-scope="scope">
+            {{ scope.row.employeestatus === 0 ? '停用' : '启用' }}
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" width="150">
           <template slot-scope="scope">
             <el-button @click="handleClick('password', scope.row)" type="text" size="small">修改密码</el-button>
