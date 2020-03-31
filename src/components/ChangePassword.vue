@@ -3,7 +3,7 @@
              :visible.sync="showDialog"
              width="500px"
              v-loading="loading"
-             :before-close="closeDialog">
+             @close="closeDialog">
     <el-form :model="passwordForm"
              :rules="passwordFormRules"
              ref="passwordForm"

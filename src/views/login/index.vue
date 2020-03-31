@@ -3,7 +3,7 @@
     <div class="container">
       <div class="logo"></div>
       <div class="content">
-        <div class="title">项目协同平台</div>
+        <div class="title">后台管理</div>
         <el-form
           ref="loginForm"
           :model="loginForm"

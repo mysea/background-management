@@ -13,9 +13,9 @@
           ref="table"
           :data="list"
           :height="tableHeight">
-          <el-table-column prop="code" show-overflow-tooltip label="字典标识"></el-table-column>
           <el-table-column prop="group" show-overflow-tooltip label="组"></el-table-column>
           <el-table-column prop="type" show-overflow-tooltip label="组类型"></el-table-column>
+          <el-table-column prop="code" show-overflow-tooltip label="字典标识"></el-table-column>
           <el-table-column prop="remark" show-overflow-tooltip label="备注"></el-table-column>
           <el-table-column fixed="right" label="操作" width="250">
             <template slot-scope="scope">

@@ -107,7 +107,6 @@ export default {
       let allChecked = node.data.privileges.every(item => {
         return item.checked
       })
-      // node.checked = allChecked
       let someChecked = node.data.privileges.some(item => {
         return item.checked
       })

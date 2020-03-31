@@ -2,7 +2,8 @@ import {
   getPrivileges,
   getDictionarys,
   getRoleUsers,
-  getWebsites
+  getWebsites,
+  getLocales
 } from '@/api/background'
 import { getUsers } from '@/api/user'
 export default {
@@ -63,6 +64,9 @@ export default {
       } else if (_this.type === 'website') {
         params.name = this.searchInput
         request = getWebsites(params)
+      } else if (_this.type === 'locale') {
+        params.showLocalizedLabel = true
+        request = getLocales(params)
       }
       if (_this.type === 'roleUser') {
         request.then(res => {
@@ -125,9 +129,9 @@ export default {
     getConstHeight () {
       let constHeight = 0
       if (this.type === 'roleUser') {
-        constHeight = 235
+        constHeight = 239
       } else {
-        constHeight = 184
+        constHeight = 188
       }
       return constHeight
     },

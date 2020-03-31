@@ -2,15 +2,30 @@
   <div class="wrapper">
     <div class="container">
       <div class="content">
+        <div class="table-top">
+          <el-select v-model="language" placeholder="请选择语言">
+            <el-option
+              v-for="item in languageOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-button type="primary" class="table-top-button" @click="newDictionary">保存</el-button>
+        </div>
         <el-table
           v-loading="loading"
           ref="table"
           :data="list"
           :height="tableHeight">
+          <el-table-column prop="group" show-overflow-tooltip label="组"></el-table-column>
+          <el-table-column prop="type" show-overflow-tooltip label="组类型"></el-table-column>
           <el-table-column prop="code" show-overflow-tooltip label="字典标识"></el-table-column>
-          <el-table-column prop="group" show-overflow-tooltip label="所属组"></el-table-column>
-          <el-table-column prop="type" show-overflow-tooltip label="所属组类型"></el-table-column>
-          <el-table-column prop="remark" show-overflow-tooltip label="备注"></el-table-column>
+          <el-table-column fixed="right" label="操作" width="250">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.owner_name" placeholder="请输入内容"></el-input>
+            </template>
+          </el-table-column>
         </el-table>
         <div class="p-container">
           <el-pagination class="p-bar"
@@ -25,6 +40,38 @@
         </div>
       </div>
     </div>
+
+    <!-- 新建或编辑 -->
+    <el-dialog :title="dialogTitle"
+      :visible.sync="isShowDialog"
+      width="40%"
+      v-loading="dialogLoading"
+      :close-on-click-modal="false"
+      @close="closeDialog">
+      <el-form
+        :model="dictionaryForm"
+        :rules="dictionaryFormRules"
+        ref="dictionaryForm"
+        label-width="80px"
+        label-position="right">
+        <el-form-item label="组" prop="group">
+          <el-input v-model="dictionaryForm.group"></el-input>
+        </el-form-item>
+        <el-form-item label="组类型" prop="type">
+          <el-input v-model="dictionaryForm.type"></el-input>
+        </el-form-item>
+        <el-form-item label="字典标识" prop="code">
+          <el-input v-model="dictionaryForm.code"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dictionaryForm.remark"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button type="primary" @click="submitForm('dictionaryForm')">保 存</el-button>
+        <el-button @click="isShowDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -34,11 +81,117 @@ import {
   updateDictionary,
   deleteDictionary
   } from '@/api/background'
+import {
+  saveSuccessToast,
+  deleteSuccessToast,
+  deleteConfirm
+  } from '@/utils/toast'
 import table from '../mixins/table'
 export default {
   mixins: [table],
   data () {
-    return {}
+    return {
+      language: 2052,
+      languageOptions: [
+        {
+          label: '中文',
+          value: 2052
+        },
+        {
+          label: 'English',
+          value: 1033
+        }
+      ],
+      type: 'locale',
+      dialogTitle: '',
+      isShowDialog: false,
+      dialogLoading: false,
+      dictionaryForm: {
+        code: '',
+        group: '',
+        type: '',
+        remark: ''
+      },
+      dictionaryFormRules: {
+        code: [
+          { required: true, message: '请输入字典标识', trigger: 'blur' }
+        ],
+        group: [
+          { required: true, message: '请输入组', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '请输入组类型', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  created () {
+    this.getList()
+  },
+  methods: {
+    newDictionary () {
+      this.isShowDialog = true
+      this.dialogTitle = '新建'
+    },
+    handleClick (type, row) {
+      if (type === 'edit') {
+        this.isShowDialog = true
+        this.dialogTitle = '编辑'
+        this.dictionaryForm = JSON.parse(JSON.stringify(row))
+      } else {
+        deleteConfirm().then(() => {
+          deleteDictionary(row.id).then(res => {
+            if (res) {        
+              deleteSuccessToast()
+              this.getList()
+            }
+          })
+        }).catch(() => {})
+      }
+    },
+    submitForm (formName) {
+      var _this = this
+      _this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (_this.dialogTitle === '新建') {
+            _this.dialogLoading = true  
+            addDictionary(_this.dictionaryForm).then(res => {
+              _this.dialogLoading = false
+              if (res) {
+                _this.isShowDialog = false
+                saveSuccessToast()
+                _this.getList()
+              }
+            })
+          } else {
+            _this.dialogLoading = true
+            updateDictionary(_this.dictionaryForm.id, _this.dictionaryForm).then(res => {
+              _this.dialogLoading = false
+              if (res) {
+                _this.isShowDialog = false
+                saveSuccessToast()
+                _this.getList()
+              }
+            })
+          }
+        } else {
+          return false
+        }
+      })
+    },
+    closeDialog () {
+      this.isShowDialog = false
+      this.resetForm('dictionaryForm')
+    },
+    resetForm (formName) {
+      this.dictionaryForm = {
+        code: '',
+        group: '',
+        type: '',
+        remark: ''
+      }
+      this.$refs[formName].resetFields()
+    }
   }
 }
 </script>
@@ -64,8 +217,5 @@ export default {
   left: 0;
   bottom: 0;
   right: 0;
-}
-.table-top {
-  padding: 10px 0;
 }
 </style>

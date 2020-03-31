@@ -118,12 +118,12 @@ export default {
     },
     // 获取用户已有角色
     getRoles () {
+      this.showRoleDialog = true
       getUserRoles(this.currentUserId).then(res => {
         this.roleList = []
         for (let i = 0; i < res.length; i++) {
           this.roleList.push(res[i]['id'])
         }
-        this.showRoleDialog = true
       })
     }
   }
