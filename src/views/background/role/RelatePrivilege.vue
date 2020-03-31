@@ -5,19 +5,22 @@
     </div>
     <div style="padding: 0 17px;">
       <el-tree
-        @check-change="checkChange"
+        ref="tree"
+        node-key="id"
         :data="tree"
         show-checkbox
-        node-key="id"
+        :check-strictly="checkStrickly"
+        @check-change="checkChange"
         default-expand-all
         :expand-on-click-node="false">
         <div class="action-group" slot-scope="{ node, data }">
-          <div class="action-text" :style="{ width: (4 - data.level) * 18 + 150 + 'px'}">{{ data.label }}</div>
+          <div class="action-text" :style="{ width: (4 - data.level) * 18 + 50 + 'px'}">{{ data.label }}</div>
           <div class="action-item">
             <el-checkbox
               v-for="(item, index) in data.privileges"
               :key="index"
-              v-model="item.checked">{{ item.name }}</el-checkbox>
+              v-model="item.checked"
+              @change="itemChange($event, node)">{{ item.name }}</el-checkbox>
           </div>
         </div>
       </el-tree>
@@ -48,6 +51,7 @@ export default {
   },
   data () {
     return {
+      checkStrickly: true,
       tree: [],
       privilegeList: [] // 权限id列表
     }
@@ -75,6 +79,7 @@ export default {
         this.tree = this.getTree(res.list, null, 1)
       })
     },
+    // 初始化树形列表
     getTree (data, pid, index) {
       const treeList = []
       data.map(item => {
@@ -91,27 +96,38 @@ export default {
       })
       return treeList
     },
+    // 选中左侧复选框时，设置右侧所有复选框的选中状态
     checkChange (node, selected) {
       node.privileges.forEach(item => {
         this.$set(item, 'checked', selected)
       })
     },
-    // 根据已有的权限对模块权限树对应的节点设置选中
+    // 选中右侧复选框时，判断是否全选来设置左侧复选框
+    itemChange (event, node) {
+      let allChecked = node.data.privileges.every(item => {
+        return item.checked
+      })
+      node.checked = allChecked
+    },
+    // 初始化某个角色已有权限的选中状态
     filterTree (list) {
       list.map(item => {
+        let allChecked = true
         item.privileges.forEach(item => {
           if (this.privilegeList.indexOf(item.id) !== -1) {
             this.$set(item, 'checked', true)
           } else {
+            allChecked = false
             this.$set(item, 'checked', false)
           }
         })
+        this.$refs.tree.setChecked(item.id, allChecked, false)
         if (item.children && item.children.length) {
           this.filterTree(item.children)
         }
       })
     },
-    // 将模块权限树中选中的权限的id过滤出来
+    // 保存时遍历树形列表，过滤选中权限的id
     filterPrivilege (list) {
       list.map(item => {
         let checkedItemList = item.privileges.filter(i => {
