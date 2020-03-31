@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://pmtest.grgbanking.com:9000' : '/api'
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://10.252.254.182:9981' : '/api'
 
 function urlHandle (url) {
   return `${BASE_URL}${url}`
@@ -14,7 +14,6 @@ const URL = {
   // 用户管理
   LOGIN: urlHandle('/api/Common_User'),
   GET_USERS: urlHandle('/api/Common_User'),
-  GET_USER_MENUS: urlHandle('/api/Common_User/{employeeid}/Common_Module'),
   GET_USER_ROLES: urlHandle('/api/Common_User'),
   ADD_USER_ROLE: urlHandle('/api/Common_User'),
   // 部门管理
@@ -24,7 +23,6 @@ const URL = {
   ADD_MODULE: urlHandle('/api/Common_Module'),
   UPDATE_MODULE: urlHandle('/api/Common_Module'),
   DELETE_MODULE: urlHandle('/api/Common_Module'),
-  GET_MODULE_PRIVILEGE: urlHandle('/api/Common_Module?showPrivilege=true'),
   // 权限管理
   GET_PRIVILEGES: urlHandle('/api/Common_Privilege'),
   ADD_PRIVILEGE: urlHandle('/api/Common_Privilege'),

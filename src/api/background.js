@@ -58,10 +58,6 @@ export function deletePrivilege (id) {
   return request.delete(`${URL.DELETE_PRIVILEGE}/${id}`)
 }
 
-export function getModulePrivilege () {
-  return request.get(`${URL.GET_MODULE_PRIVILEGE}`)
-}
-
 // 角色管理
 export function getRoles (data) {
   return request.get(`${URL.GET_ROLES}?${param(data)}`)
@@ -114,7 +110,7 @@ export function deleteDictionary (id) {
 
 // 全球化
 export function getLocales (data) {
-  return request.get(`${URL.GET_LOCALES}?${param(data)}`)
+  return request.get(`${URL.GET_DICTIONARYS}?${param(data)}`)
 }
 
 export function addLocale (data) {

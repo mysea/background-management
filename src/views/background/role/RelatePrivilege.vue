@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import { getModulePrivilege } from '@/api/background'
+import { getModules } from '@/api/background'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     value: {
@@ -40,6 +41,9 @@ export default {
     value (val) {
       this.privilegeList = val
       this.filterTree(this.tree)
+    },
+    website () {
+      this.getModulePrivilegeList()
     }
   },
   data () {
@@ -47,6 +51,11 @@ export default {
       tree: [],
       privilegeList: [] // 权限id列表
     }
+  },
+  computed: {
+    ...mapGetters([
+      'website'
+    ])
   },
   created () {
     this.getModulePrivilegeList()
@@ -58,7 +67,11 @@ export default {
   methods: {
     // 获取模块权限
     getModulePrivilegeList () {
-      getModulePrivilege().then(res => {
+      let params = {
+        showPrivilege: true,
+        website_id: this.website.value
+      }
+      getModules(params).then(res => {
         this.tree = this.getTree(res.list, null, 1)
       })
     },
