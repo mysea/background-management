@@ -107,7 +107,19 @@ export default {
       let allChecked = node.data.privileges.every(item => {
         return item.checked
       })
-      node.checked = allChecked
+      // node.checked = allChecked
+      let someChecked = node.data.privileges.some(item => {
+        return item.checked
+      })
+      if (allChecked) {
+        node.checked = true
+        node.indeterminate = false
+      } else if (someChecked) {
+        node.indeterminate = true
+      } else {
+        node.checked = false
+        node.indeterminate = false
+      }
     },
     // 初始化某个角色已有权限的选中状态
     filterTree (list) {
