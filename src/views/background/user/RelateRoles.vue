@@ -3,7 +3,7 @@
           :visible.sync="showDialog"
           width="500px"
           v-loading="loading"
-          :before-close="closeDialog">
+          @close="closeDialog">
     <el-checkbox-group v-model="checkList">
       <el-checkbox v-for="(item, index) in roleList" :key="index" :label="item.id">{{ item.name }}</el-checkbox>
     </el-checkbox-group>
@@ -16,6 +16,7 @@
 
 <script>
 import { getRoles } from '@/api/background'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     show: {
@@ -35,6 +36,9 @@ export default {
     },
     value (val) {
       this.checkList = val
+    },
+    website () {
+      this.getRoleList()
     }
   },
   created () {
@@ -48,11 +52,17 @@ export default {
       roleList: []
     }
   },
+  computed: {
+    ...mapGetters([
+      'website'
+    ])
+  },
   methods: {
     getRoleList () {
       let data = {
         pageIndex: 1,
-        pagesize: 1000
+        pagesize: 1000,
+        website_id: this.website.value
       }
       getRoles(data).then(res => {
         const tempList = res.list
