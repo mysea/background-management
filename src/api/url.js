@@ -43,10 +43,7 @@ const URL = {
   UPDATE_DICTIONARY: urlHandle('/api/Common_Dictionary'),
   DELETE_DICTIONARY: urlHandle('/api/Common_Dictionary'),
   // 全球化
-  GET_LOCALES: urlHandle('/api/Common_LocalizedLabel'),
-  ADD_LOCALE: urlHandle('/api/Common_LocalizedLabel'),
-  UPDATE_LOCALE: urlHandle('/api/Common_LocalizedLabel'),
-  DELETE_LOCALE: urlHandle('/api/Common_LocalizedLabel')
+  ADD_LOCALE: urlHandle('/api/Common_LocalizedLabel/List')
 }
 
 export default URL

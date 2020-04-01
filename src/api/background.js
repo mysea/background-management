@@ -109,18 +109,6 @@ export function deleteDictionary (id) {
 }
 
 // 全球化
-export function getLocales (data) {
-  return request.get(`${URL.GET_DICTIONARYS}?${param(data)}`)
-}
-
 export function addLocale (data) {
   return request.post(URL.ADD_LOCALE, data)
-}
-
-export function updateLocale (id, data) {
-  return request.put(`${URL.UPDATE_LOCALE}/${id}`, data)
-}
-
-export function deleteLocale (id) {
-  return request.delete(`${URL.DELETE_LOCALE}/${id}`)
 }

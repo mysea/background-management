@@ -2,8 +2,7 @@ import {
   getPrivileges,
   getDictionarys,
   getRoleUsers,
-  getWebsites,
-  getLocales
+  getWebsites
 } from '@/api/background'
 import { getUsers } from '@/api/user'
 export default {
@@ -66,7 +65,8 @@ export default {
         request = getWebsites(params)
       } else if (_this.type === 'locale') {
         params.showLocalizedLabel = true
-        request = getLocales(params)
+        params.language_id = this.language_id
+        request = getDictionarys(params)
       }
       if (_this.type === 'roleUser') {
         request.then(res => {
