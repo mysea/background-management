@@ -1,7 +1,6 @@
 <template>
   <div class="navbar">
     <img class="logo" src="@/assets/img/logo_color.png"/>
-    <!-- <div class="logo"></div> -->
 
     <div class="nav-items-container">
       <flexbox style="width: auto;">
@@ -142,18 +141,11 @@ export default {
 }
 
 .logo {
-  width: 170px;
-  height: 50px;
-  object-fit: contain;
+  width: 150px;
+  display: block;
+  flex-shrink: 0;
+  margin-right: 15px;
 }
-
-// .logo {
-//   background: url('../../../assets/img/logo.png') no-repeat;
-//   background-size: 59% auto;
-//   height: 42px;
-//   overflow-y: hidden;
-//   margin-bottom: 10px;
-// }
 
 .nav-items-container {
   flex: 1;
