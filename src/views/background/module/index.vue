@@ -29,36 +29,40 @@
 
       <!-- 右边内容 -->
       <div class="content">
-        <div class="table-top">
-          <el-input placeholder="搜索权限名称" v-model="searchInput" class="search" clearable @clear="getList">
-            <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
-          </el-input>
-          <el-button type="primary" class="table-top-button" @click="newAuth">新建权限</el-button>
-        </div>
-        <el-table
-          v-loading="loading"
-          ref="table"
-          :data="list"
-          :height="tableHeight">
-          <el-table-column prop="name" show-overflow-tooltip label="权限名称"></el-table-column>
-          <el-table-column prop="type" show-overflow-tooltip label="权限标识"></el-table-column>
-          <el-table-column fixed="right" label="操作" width="150">
-            <template slot-scope="scope">
-              <el-button @click="handleClick('delete', scope.row)" type="text" size="small">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="p-container">
-          <el-pagination class="p-bar"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="pageSizes"
-            :page-size.sync="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total">
-          </el-pagination>
-        </div>
+        <el-tabs>
+          <el-tab-pane label="模块权限">
+            <div class="table-top">
+              <!-- <el-input placeholder="搜索权限名称" v-model="searchInput" class="search" clearable @clear="getList">
+                <el-button slot="append" icon="el-icon-search" @click="getList"></el-button>
+              </el-input> -->
+              <el-button type="primary" class="table-top-button" @click="newAuth">新建权限</el-button>
+            </div>
+            <el-table
+              v-loading="loading"
+              ref="table"
+              :data="list"
+              :height="tableHeight1">
+              <el-table-column prop="name" show-overflow-tooltip label="权限名称"></el-table-column>
+              <el-table-column prop="type" show-overflow-tooltip label="权限标识"></el-table-column>
+              <el-table-column fixed="right" label="操作" width="150">
+                <template slot-scope="scope">
+                  <el-button @click="handleClick('delete', scope.row)" type="text" size="small">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="p-container">
+              <el-pagination class="p-bar"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="pageSizes"
+                :page-size.sync="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+              </el-pagination>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
 
@@ -444,5 +448,15 @@ export default {
   .node-label-set {
     display: block;
   }
+}
+
+.el-tabs /deep/ .el-tabs__header {
+  padding: 0 17px;
+  margin: 0 0 15px !important;
+}
+.el-tabs /deep/ .el-tabs__item {
+  font-size: 13px !important;
+  height: 40px !important;
+  line-height: 40px !important;
 }
 </style>
