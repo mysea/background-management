@@ -438,7 +438,7 @@ export default {
   .node-data {
     .node-label {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       margin-right: 8px;
       .node-icon {
         width: 16px;
