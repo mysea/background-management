@@ -25,7 +25,7 @@ http.interceptors.response.use(
       const status = err.response.status
       switch (status) {
         case 500:
-          toast('error', '服务器500错误')
+          toast('error', '接口错误：500')
           break
         case 401:
           confirm('授权已过期，请重新登录', '提示', {
@@ -36,6 +36,9 @@ http.interceptors.response.use(
             store.dispatch('logout')
             location.reload()
           }).catch(() => {})
+          break
+        case 404:
+          toast('error', '接口错误：404')
           break
         default:
           break
