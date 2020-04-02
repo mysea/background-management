@@ -39,16 +39,20 @@ export default {
         pageIndex: 1,
         pagesize: 10000
       }
-      getWebsites(params).then(res => {
-        this.websiteList = res.list.map(item => {
-          return {
-            label: item.name,
-            value: item.id
-          }
+      getWebsites(params)
+        .then(res => {
+          this.websiteList = res.list.map(item => {
+            return {
+              label: item.name,
+              value: item.id
+            }
+          })
+          this.websiteName = this.websiteList[0]['label']
+          this.$store.commit('SET_WEBSITE', this.websiteList[0])
         })
-        this.websiteName = this.websiteList[0]['label']
-        this.$store.commit('SET_WEBSITE', this.websiteList[0])
-      })
+        .catch(err => {
+          this.getWebsiteList(params)
+        })
     },
     switchwebsite (item) {
       this.websiteName = item.label
