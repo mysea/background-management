@@ -8,7 +8,7 @@
       v-loading="loading"
       ref="table"
       :data="list"
-      :height="tableHeight">
+      :height="tableHeight1">
       <el-table-column prop="employeeid" show-overflow-tooltip label="工号"></el-table-column>
       <el-table-column prop="employeename" show-overflow-tooltip label="姓名"></el-table-column>
       <el-table-column prop="sex" show-overflow-tooltip label="性别">
