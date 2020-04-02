@@ -10,7 +10,12 @@
           :expand-on-click-node="false"
           highlight-current>
           <flexbox class="node-data" slot-scope="{ node, data }">
-            <div class="node-label" @click="handleNodeClick(data)">{{ node.label }}</div>
+            <div class="node-label" @click="handleNodeClick(data)">
+              <div class="node-icon" v-show="data.id">
+                <i :class="['grg grg-' + data.orignData.icon_name ]"></i>
+              </div>
+              <span>{{ node.label }}</span>
+            </div>
             <div class="node-label-set">
               <el-button type="text" size="mini" @click="() => append(node, data)">
                 <i class="el-icon-plus"></i>
@@ -432,7 +437,14 @@ export default {
   height: 30px;
   .node-data {
     .node-label {
+      display: flex;
+      align-items: center;
       margin-right: 8px;
+      .node-icon {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+      }
     }
     .node-label-set {
       display: none;
