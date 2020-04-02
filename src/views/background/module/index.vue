@@ -6,12 +6,11 @@
         <el-tree
           :data="treeList"
           node-key="id"
-          @node-click="handleNodeClick"
           default-expand-all
           :expand-on-click-node="false"
           highlight-current>
           <flexbox class="node-data" slot-scope="{ node, data }">
-            <div class="node-label">{{ node.label }}</div>
+            <div class="node-label" @click="handleNodeClick(data)">{{ node.label }}</div>
             <div class="node-label-set">
               <el-button type="text" size="mini" @click="() => append(node, data)">
                 <i class="el-icon-plus"></i>
@@ -260,9 +259,9 @@ export default {
     edit (node, data) {
       this.isShowDialog = true
       this.dialogTitle = '编辑'
-      console.log(node)
-      console.log(data)
-      this.moduleForm = data.orignData
+      let obj = data.orignData
+      delete obj.children
+      this.moduleForm = JSON.parse(JSON.stringify(obj))
     },
     remove (node, data) {
       deleteConfirm().then(() => {
