@@ -83,6 +83,8 @@ export default {
           _this.login(_this.loginForm).then(res => {
             _this.loading = false
             _this.$router.push({ path: this.redirect || '/' })
+          }).catch(err => {
+            _this.loading = false
           })
         } else {
           return false
