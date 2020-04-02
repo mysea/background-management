@@ -120,19 +120,21 @@ export default {
         node.indeterminate = false
       }
     },
-    // 初始化某个角色已有权限的选中状态
+    // 遍历每个节点的权限列表，如果在已有的权限中，则设置为选中
     filterTree (list) {
       list.map(item => {
-        let allChecked = true
-        item.privileges.forEach(item => {
-          if (this.privilegeList.indexOf(item.id) !== -1) {
-            this.$set(item, 'checked', true)
-          } else {
-            allChecked = false
-            this.$set(item, 'checked', false)
-          }
-        })
-        this.$refs.tree.setChecked(item.id, allChecked, false)
+        if (item.privileges.length) {  
+          let allChecked = true
+          item.privileges.forEach(item => {
+            if (this.privilegeList.indexOf(item.id) !== -1) {
+              this.$set(item, 'checked', true)
+            } else {
+              allChecked = false
+              this.$set(item, 'checked', false)
+            }
+          })
+          this.$refs.tree.setChecked(item.id, allChecked, false)
+        }
         if (item.children && item.children.length) {
           this.filterTree(item.children)
         }
