@@ -85,8 +85,13 @@
         <el-form-item label="模块路径" prop="url">
           <el-input v-model="moduleForm.url"></el-input>
         </el-form-item>
-        <el-form-item label="图标类名" prop="icon_name">
-          <el-input v-model="moduleForm.icon_name"></el-input>
+        <el-form-item label="模块图标" prop="icon_name">
+          <div class="icons-box">
+            <div class="select-icon">
+              <i :class="['grg grg-' + moduleForm.icon_name]"></i>
+            </div>
+            <Icons @save="selectIcon"></Icons>
+          </div>
         </el-form-item>
         <el-form-item label="排序号" prop="sort_num">
           <el-input v-model="moduleForm.sort_num"></el-input>
@@ -141,11 +146,14 @@ import {
   deleteSuccessToast,
   deleteConfirm
   } from '@/utils/toast'
+import Icons from '@/components/icons'
 import { mapGetters } from 'vuex'
-import { createTree } from '@/utils'
 import table from '../mixins/table'
 export default {
   mixins: [table],
+  components: {
+    Icons
+  },
   data () {
     return {
       type: 'priviledge',
@@ -206,7 +214,7 @@ export default {
     }
   },
   methods: {
-    // 模块操作
+    // 模块树数据
     getModuleList () {
       let data = {
         pageIndex: 1,
@@ -218,10 +226,26 @@ export default {
         let data = res.list
         // 根节点是站点名字
         data.push({ name: this.website.label, id: null, parent_id: '0' })
-        this.treeList = createTree(data, '0')
+        this.treeList = this.createTree(data, '0')
         this.navLoading = false
       })
     },
+    createTree (data, pid) {
+      const treeList = []
+      data.map(item => {
+        if (item.parent_id === pid) {
+          item.children = this.createTree(data, item.id)
+          treeList.push({
+            id: item.id,
+            label: item.name,
+            children: item.children,
+            orignData: item
+          })
+        }
+      })
+      return treeList
+    },
+    // 模块树操作
     handleNodeClick (data) {
       if (data.id) { // 点击的是非根节点时才去获取权限列表
         this.module_id = data.id
@@ -236,6 +260,8 @@ export default {
     edit (node, data) {
       this.isShowDialog = true
       this.dialogTitle = '编辑'
+      console.log(node)
+      console.log(data)
       this.moduleForm = data.orignData
     },
     remove (node, data) {
@@ -341,6 +367,9 @@ export default {
         }
       }
       this.$refs[formName].resetFields()
+    },
+    selectIcon (iconName) {
+      this.moduleForm.icon_name = iconName
     }
   }
 }
@@ -375,6 +404,24 @@ export default {
   left: 210px;
   bottom: 0;
   right: 0;
+}
+
+.icons-box {
+  display: flex;
+  align-items: center;
+  .select-icon {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    border: 1px dashed #999;
+    border-radius: 4px;
+    margin-right: 10px;
+    i {
+      font-size: 20px;
+    }
+  }
 }
 
 /** 树形结构 */
