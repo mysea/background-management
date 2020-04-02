@@ -10,7 +10,8 @@ export default {
     return {
       loading: false,
       searchInput: '', // 搜索框文本
-      tableHeight: document.documentElement.clientHeight - this.getConstHeight(),
+      tableHeight: document.documentElement.clientHeight - 188,
+      tableHeight1: document.documentElement.clientHeight - 244,
       list: [],
       selectionsList: [],
       total: 0,
@@ -91,7 +92,7 @@ export default {
       }
     },
     handleRowClick (row, column, event) {
-      console.log(column.property, column.label)
+      // console.log(column.property, column.label)
     },
     handleSelectionChange (val) {
       this.selectionsList = val
@@ -126,17 +127,9 @@ export default {
       this.currentPage = val
       this.getList()
     },
-    getConstHeight () {
-      let constHeight = 0
-      if (this.type === 'roleUser') {
-        constHeight = 239
-      } else {
-        constHeight = 188
-      }
-      return constHeight
-    },
     updateTableHeight () {
-      this.tableHeight = document.documentElement.clientHeight - this.getConstHeight()
+      this.tableHeight = document.documentElement.clientHeight - 188
+      this.tableHeight1 = document.documentElement.clientHeight - 244
     }
   }
 }
