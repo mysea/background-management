@@ -35,7 +35,7 @@
       width="200"
       trigger="hover">
       <div class="handle-items">
-        <div class="handle-item" @click="handleClick('person')">
+        <div class="handle-item" @click="handleClick('password')">
           <i class="grg grg-password"></i>{{ '修改密码' }}
         </div>
         <div class="handle-item" @click="handleClick('goout')">
@@ -122,7 +122,7 @@ export default {
           _this.logout()
           location.reload()
         }).catch(() => {})
-      } else if (type === 'person') {
+      } else if (type === 'password') {
       }
     }
   }

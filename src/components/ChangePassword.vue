@@ -63,7 +63,7 @@ export default {
       this.$emit('close')
     },
     submitForm () {
-
+      this.$emit('close')
     }
   }
 }
