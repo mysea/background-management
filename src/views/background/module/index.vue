@@ -224,19 +224,21 @@ export default {
   methods: {
     // 模块树数据
     getModuleList () {
-      let data = {
-        pageIndex: 1,
-        pagesize: 1000,
-        website_id: this.website.value
+      if (this.website.value) {  
+        let data = {
+          pageIndex: 1,
+          pagesize: 1000,
+          website_id: this.website.value
+        }
+        this.navLoading = true
+        getModules(data).then(res => {
+          let data = res.list
+          // 根节点是站点名字
+          data.push({ name: this.website.label, id: null, parent_id: '0' })
+          this.treeList = this.createTree(data, '0')
+          this.navLoading = false
+        })
       }
-      this.navLoading = true
-      getModules(data).then(res => {
-        let data = res.list
-        // 根节点是站点名字
-        data.push({ name: this.website.label, id: null, parent_id: '0' })
-        this.treeList = this.createTree(data, '0')
-        this.navLoading = false
-      })
     },
     createTree (data, pid) {
       const treeList = []

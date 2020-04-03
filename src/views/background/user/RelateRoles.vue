@@ -59,20 +59,22 @@ export default {
   },
   methods: {
     getRoleList () {
-      let data = {
-        pageIndex: 1,
-        pagesize: 1000,
-        website_id: this.website.value
-      }
-      getRoles(data).then(res => {
-        const tempList = res.list
-        this.roleList = tempList.map(item => {
-          return {
-            id: item.id,
-            name: item.name
-          }
+      if (this.website.value) {  
+        let data = {
+          pageIndex: 1,
+          pagesize: 1000,
+          website_id: this.website.value
+        }
+        getRoles(data).then(res => {
+          const tempList = res.list
+          this.roleList = tempList.map(item => {
+            return {
+              id: item.id,
+              name: item.name
+            }
+          })
         })
-      })
+      }
     },
     closeDialog () {
       this.checkList = []

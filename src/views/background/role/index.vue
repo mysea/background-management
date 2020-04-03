@@ -129,16 +129,18 @@ export default {
   },
   methods: {
     getRoleList () {
-      let data = {
-        pageIndex: 1,
-        pagesize: 1000,
-        website_id: this.website.value
+      if (this.website.value) {
+        let data = {
+          pageIndex: 1,
+          pagesize: 1000,
+          website_id: this.website.value
+        }
+        this.navLoading = true
+        getRoles(data).then(res => {
+          this.navLoading = false
+          this.roleList = res.list
+        })
       }
-      this.navLoading = true
-      getRoles(data).then(res => {
-        this.navLoading = false
-        this.roleList = res.list
-      })
     },
     selectRole (item) {
       this.activeRole = item

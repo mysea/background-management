@@ -71,13 +71,15 @@ export default {
   methods: {
     // 获取模块权限
     getModulePrivilegeList () {
-      let params = {
-        showPrivilege: true,
-        website_id: this.website.value
+      if (this.website.value) { 
+        let params = {
+          showPrivilege: true,
+          website_id: this.website.value
+        }
+        getModules(params).then(res => {
+          this.tree = this.getTree(res.list, null, 1)
+        })
       }
-      getModules(params).then(res => {
-        this.tree = this.getTree(res.list, null, 1)
-      })
     },
     // 初始化树形列表
     getTree (data, pid, index) {
