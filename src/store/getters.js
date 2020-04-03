@@ -1,4 +1,5 @@
 const getters = {
+  userInfo: state => state.user.userInfo,
   activeIndex: state => state.app.sidebar.activeIndex,
   navActiveIndex: state => state.app.navbar.activeIndex,
   website: state => state.app.website,

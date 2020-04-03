@@ -26,20 +26,13 @@ const user = {
       return new Promise((resolve, reject) => {
         login(data).then(res => {
           if (res) {
-            Lockr.set('Authorization', res)
+            commit('SET_USER_INFO', res.loginMsg)
+            Lockr.set('Authorization', res.jwtToken)
           }
           resolve(res)
         }).catch(err => {
           reject(err)
         })
-      })
-    },
-    getAuth ({ commit }, data) {
-      return new Promise((resolve, reject) => {
-      })
-    },
-    getUserInfo ({ commit }, data) {
-      return new Promise((resolve, reject) => {
       })
     },
     logout ({ commit }) {

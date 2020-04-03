@@ -43,7 +43,7 @@
         </div>
       </div>
       <div slot="reference" class="user-container">
-        <div class="user-img">李文</div>
+        <div class="user-img">{{ userInfo.oauserid }}</div>
         <i class="el-icon-caret-bottom mark"></i>
       </div>
     </el-popover>
@@ -73,6 +73,7 @@ export default {
   },
   computed: {
     ...mapGetters([
+      'userInfo',
       'background'
     ]),
     items () {
