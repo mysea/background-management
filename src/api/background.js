@@ -19,6 +19,10 @@ export function deleteWebsite (id) {
   return request.delete(`${URL.DELETE_WEBSITE}/${id}`)
 }
 
+export function addWebsiteUser (id, data) {
+  return request.post(`${URL.ADD_WEBSITE_USER}/${id}/Common_User`, data)
+}
+
 // 部门管理
 export function getOrgs (data) {
   return request.get(`${URL.GET_ORGS}?${param(data)}`)

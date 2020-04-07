@@ -11,6 +11,7 @@ const URL = {
   ADD_WEBSITE: urlHandle('/api/Common_WebSite'),
   UPDATE_WEBSITE: urlHandle('/api/Common_WebSite'),
   DELETE_WEBSITE: urlHandle('/api/Common_WebSite'),
+  ADD_WEBSITE_USER: urlHandle('/api/Common_WebSite'),
   // 用户管理
   LOGIN: urlHandle('/api/Common_User'),
   GET_USERS: urlHandle('/api/Common_User'),
