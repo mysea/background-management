@@ -9,9 +9,6 @@
              ref="passwordForm"
              label-width="80px"
              label-position="right">
-      <el-form-item label="旧密码" prop="oldPassword">
-        <el-input v-model="passwordForm.oldPassword"></el-input>
-      </el-form-item>
       <el-form-item label="新密码" prop="newPassword">
         <el-input v-model="passwordForm.newPassword"></el-input>
       </el-form-item>
@@ -24,6 +21,8 @@
 </template>
 
 <script>
+import { resetPassword } from '@/api/user'
+import { saveSuccessToast } from '@/utils/toast'
 export default {
   props: {
     value: {
@@ -39,31 +38,42 @@ export default {
     show (val) {
       this.showDialog = val
     }
-    // show: {
-    //   handler(val) {
-    //     this.showDialog = val
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // }
   },
   data () {
     return {
       showDialog: false,
       loading: false,
       passwordForm: {
-        oldPassword: '',
         newPassword: ''
       },
-      passwordFormRules: {}
+      passwordFormRules: {
+        newPassword: { required: true, message: '请输入新密码', trigger: 'change' }
+      }
     }
   },
   methods: {
     closeDialog () {
+      this.passwordForm = {
+        newPassword: ''
+      }
+      this.$refs['passwordForm'].resetFields()
       this.$emit('close')
     },
     submitForm () {
-      this.$emit('close')
+      this.$refs['passwordForm'].validate((valid) => {
+        if (valid) {
+          if (this.value) {
+            resetPassword(this.value, this.passwordForm.newPassword).then(res => {
+              if (res) {
+                saveSuccessToast()
+                this.$emit('close')
+              }
+            })
+          }
+        } else {
+          return false
+        }
+      })
     }
   }
 }

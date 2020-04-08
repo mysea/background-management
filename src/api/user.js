@@ -17,3 +17,7 @@ export function addUserRole (id, data) {
 export function getUserRoles (id) {
   return request.get(`${URL.GET_USER_ROLES}/${id}/Common_Role`)
 }
+
+export function resetPassword (id, data) {
+  return request.post(`${URL.LOGIN}/${id}?password=${data}`)
+}

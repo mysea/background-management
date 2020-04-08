@@ -17,6 +17,7 @@ const URL = {
   GET_USERS: urlHandle('/api/Common_User'),
   GET_USER_ROLES: urlHandle('/api/Common_User'),
   ADD_USER_ROLE: urlHandle('/api/Common_User'),
+  RESET_PASSWORD: urlHandle('/api/Common_User'),
   // 部门管理
   GET_ORGS: urlHandle('/api/Common_Org'),
   // 模块管理
