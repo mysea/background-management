@@ -218,6 +218,7 @@ export default {
   },
   watch: {
     website () {
+      this.module_id = ''
       this.getModuleList()
     }
   },

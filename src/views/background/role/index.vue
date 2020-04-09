@@ -124,6 +124,7 @@ export default {
   },
   watch: {
     website () {
+      this.activeRole = {}
       this.getRoleList()
     }
   },
@@ -217,7 +218,10 @@ export default {
       getRolePrivileges(this.activeRole.id).then(res => {
         this.authLoading = false
         var tempList = res.map(item => {
-          return item.id
+          return {
+            id: item.id,
+            privilege_level: item.privilege_level
+          }
         })
         this.privilegeList = tempList
       })

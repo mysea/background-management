@@ -1,37 +1,20 @@
 <template>
-  <div>
+  <div class="module-container" :style="{ height: treeHeight + 'px' }">
     <div class="table-top">
       <el-button type="primary" class="table-top-button" @click="save">保存</el-button>
     </div>
-    <div style="padding: 0 17px;">
-      <el-tree
-        ref="tree"
-        node-key="id"
-        :data="tree"
-        show-checkbox
-        :check-strictly="checkStrickly"
-        @check-change="checkChange"
-        default-expand-all
-        :expand-on-click-node="false">
-        <div class="action-group" slot-scope="{ node, data }">
-          <div class="action-text" :style="{ width: (4 - data.level) * 18 + 50 + 'px'}">{{ data.label }}</div>
-          <div class="action-item">
-            <el-checkbox
-              v-for="(item, index) in data.privileges"
-              :key="index"
-              v-model="item.checked"
-              @change="itemChange($event, node)">{{ item.name }}</el-checkbox>
-          </div>
-        </div>
-      </el-tree>
-    </div>
+    <module-tree :value="tree" class="tree-container"></module-tree>
   </div>
 </template>
 
 <script>
 import { getModules } from '@/api/background'
 import { mapGetters } from 'vuex'
+import moduleTree from './moduleTree'
 export default {
+  components: {
+    moduleTree
+  },
   props: {
     value: {
       type: Array,
@@ -53,6 +36,7 @@ export default {
     return {
       checkStrickly: true,
       tree: [],
+      treeHeight: document.documentElement.clientHeight - 151,
       privilegeList: [] // 权限id列表
     }
   },
@@ -63,6 +47,9 @@ export default {
   },
   created () {
     this.getModulePrivilegeList()
+    window.onresize = () => {
+      this.updateTreeHeight()
+    }
   },
   mounted () {
     this.privilegeList = this.value
@@ -98,44 +85,18 @@ export default {
       })
       return treeList
     },
-    // 选中左侧复选框时，设置右侧所有复选框的选中状态
-    checkChange (node, selected) {
-      node.privileges.forEach(item => {
-        this.$set(item, 'checked', selected)
-      })
-    },
-    // 选中右侧复选框时，判断是否全选来设置左侧复选框
-    itemChange (event, node) {
-      let allChecked = node.data.privileges.every(item => {
-        return item.checked
-      })
-      let someChecked = node.data.privileges.some(item => {
-        return item.checked
-      })
-      if (allChecked) {
-        node.checked = true
-        node.indeterminate = false
-      } else if (someChecked) {
-        node.indeterminate = true
-      } else {
-        node.checked = false
-        node.indeterminate = false
-      }
-    },
     // 遍历每个节点的权限列表，如果在已有的权限中，则设置为选中
     filterTree (list) {
       list.map(item => {
-        if (item.privileges.length) {  
-          let allChecked = true
+        if (item.privileges.length) {
           item.privileges.forEach(item => {
-            if (this.privilegeList.indexOf(item.id) !== -1) {
-              this.$set(item, 'checked', true)
-            } else {
-              allChecked = false
-              this.$set(item, 'checked', false)
+            for (let i = 0; i < this.privilegeList.length; i++) {
+              const privilege = this.privilegeList[i]
+              if (privilege.id === item.id) {
+                item.privilege_level = privilege.privilege_level
+              }
             }
           })
-          this.$refs.tree.setChecked(item.id, allChecked, false)
         }
         if (item.children && item.children.length) {
           this.filterTree(item.children)
@@ -145,12 +106,14 @@ export default {
     // 保存时遍历树形列表，过滤选中权限的id
     filterPrivilege (list) {
       list.map(item => {
-        let checkedItemList = item.privileges.filter(i => {
-          return i.checked
+        item.privileges.forEach(p => {
+          if (p.privilege_level > 0) {
+            this.privilegeList.push({
+              privilegeid: p.id,
+              privilege_level: p.privilege_level
+            })
+          }
         })
-        checkedItemList.map(j => {
-          this.privilegeList.push(j.id)
-        })  
         if (item.children && item.children.length) {
           this.filterPrivilege(item.children)
         }
@@ -160,21 +123,25 @@ export default {
       this.privilegeList = []
       this.filterPrivilege(this.tree)
       this.$emit('save', this.privilegeList)
+    },
+    updateTreeHeight () {
+      this.treeHeight = document.documentElement.clientHeight - 151
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.action-group {
+.module-container {
+  position: relative;
+}
+.tree-container {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  display: flex;  
-  .action-text {
-    margin-right: 10px;
-    .action-item {
-      flex: 1;
-    }
-  }
+  overflow: auto;
 }
 .table-top {
   height: 50px;
