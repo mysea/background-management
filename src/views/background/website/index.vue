@@ -26,6 +26,7 @@
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
           <el-button @click="handleClick('edit', scope.row)" type="text" size="small">编辑</el-button>
+          <el-button @click="handleClick('relateUser', scope.row)" type="text" size="small">关联用户</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -79,7 +80,8 @@
 import {
   addWebsite,
   updateWebsite,
-  deleteWebsite
+  deleteWebsite,
+  addWebsiteUser
 } from '@/api/background'
 import {
   saveSuccessToast,
@@ -119,6 +121,13 @@ export default {
         this.dialogTitle = '编辑'
         this.websiteForm = JSON.parse(JSON.stringify(row))
         this.websiteForm.status = this.websiteForm.status === 1
+      } else {
+        let users = ['G0109115']
+        addWebsiteUser(row.id, users).then(res => {
+          if (res) {
+            saveSuccessToast()
+          }
+        })
       }
     },
     closeDialog () {

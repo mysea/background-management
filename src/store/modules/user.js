@@ -6,9 +6,8 @@ const user = {
     // 用户信息
     userInfo: null,
     // 权限信息
-    // allAuth: null, // 总权限信息
     allAuth: true, // 总权限信息
-    background: {} // 后台管理
+    background: {} // 后台管理权限
   },
   mutations: {
     SET_USER_INFO: (state, userInfo) => {
@@ -26,7 +25,10 @@ const user = {
       return new Promise((resolve, reject) => {
         login(data).then(res => {
           if (res) {
-            commit('SET_USER_INFO', res.loginMsg)
+            const loginMsg = res.loginMsg
+            commit('SET_ALL_AUTH', loginMsg.common_WebSites)
+            delete loginMsg.common_WebSites
+            commit('SET_USER_INFO', loginMsg)
             Lockr.set('Authorization', res.jwtToken)
           }
           resolve(res)

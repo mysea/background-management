@@ -1,37 +1,68 @@
 import { asyncRouter } from '@/router'
 
-function checkAuth (router, auth) {
-  if (router.meta) {
-    const meta = router.meta
-    if (!meta.requiresAuth) {
-      return true
-    } else {
-      if (meta.index === 0) {
-        return auth[meta.type]
-      } else if (meta.index === 1) {
-        return auth[meta.type] ? auth[meta.type][router.name].indexOf('read') !== -1 : false
-      }
+const filterModules = function (websites) {
+  let modules = []
+  for (let i = 0; i < websites.length; i++) {
+    const website = websites[i]
+    if (website.id === 'acb7033c-dd90-4486-887e-1c36d6365c25') {
+      modules = website.common_Modules.map(moduleItem => {
+        const privileges = moduleItem.common_Privileges.map(privilege => {
+          return privilege.type
+        })
+        return {
+          id: moduleItem.id,
+          name: moduleItem.name,
+          code: moduleItem.code,
+          url: moduleItem.url,
+          is_auto_expand: moduleItem.is_auto_expand,
+          privileges
+        }
+      })
     }
   }
-  return true
+  return modules
 }
 
-const filterAsyncRouter = function (routers, authInfo) {
-  const res = []
-  routers.map(item => {
-    const tmp = {
-      ...item
-    }
-    // console.log('tmp: ', tmp)
-    // console.log('result: ', checkAuth(tmp, authInfo))
-    if (checkAuth(tmp, authInfo)) {
-      if (tmp.children) {
-        tmp.children = filterAsyncRouter(tmp.children, authInfo)
+const _import = file => require('@/views/background/' + file + '/index')
+
+const filterAsyncRouter = function (modules) {
+  const router = modules.map(item => {
+    return {
+      name: item.code,
+      path: `/${item.code}`,
+      component: _import(item.code),
+      meta: {
+        icon: item.code,
+        title: item.name
       }
-      res.push(tmp)
     }
   })
-  return res
+  asyncRouter[0].children = router
+  return asyncRouter
+}
+
+const setRediretRouter = function (modules) {
+  // const tempRouters = filterAsyncRouter(modules)
+  const tempRouters = asyncRouter
+  let redirect = ''
+  // 设置子系统的重定向，默认每个项目的重定向是第一个子项
+  tempRouters.map(item => {
+    if (item.children && item.children.length > 0) {
+      item.redirect = item.path + '/' + item.children[0].path
+    }
+    if (item.redirect && !redirect) { // 默认设置/的重定向为第一个子系统的重定向
+      redirect = item.redirect
+    }
+  })
+  // 设置根目录的重定向，默认跳转到第一个项目的第一个子项
+  if (redirect) {
+    tempRouters.push({
+      path: '/',
+      redirect: redirect,
+      hidden: true
+    })
+  }
+  return tempRouters
 }
 
 const permission = {
@@ -55,30 +86,10 @@ const permission = {
   actions: {
     generateRouter ({ commit }, data) {
       return new Promise(resolve => {
-        // 根据权限过滤后的路由
-        // console.log('asyncRouter: ', asyncRouter)
-        // const tempRouters = filterAsyncRouter(asyncRouter, data)
-        const tempRouters = asyncRouter
-        let redirect = ''
-        // 设置子系统的重定向，默认每个项目的重定向是第一个子项
-        tempRouters.map(item => {
-          if (item.children && item.children.length > 0) {
-            item.redirect = item.path + '/' + item.children[0].path
-          }
-          if (item.redirect && !redirect) { // 默认设置/的重定向为第一个子系统的重定向
-            redirect = item.redirect
-          }
-        })
-        // 设置根目录的重定向，默认跳转到第一个项目的第一个子项
-        if (redirect) {
-          tempRouters.push({
-            path: '/',
-            redirect: redirect,
-            hidden: true
-          })
-        }
-        commit('SET_ROUTERS', tempRouters)
-        resolve(tempRouters)
+        const modules = filterModules(data)
+        const router = setRediretRouter(modules)
+        commit('SET_ROUTERS', router)
+        resolve(router)
       })
     }
   }

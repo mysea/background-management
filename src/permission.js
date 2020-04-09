@@ -41,22 +41,7 @@ router.beforeEach((to, from, next) => {
             }
           })
         } else {
-          store.dispatch('getAuth').then(allAuth => {
-            store.dispatch('generateRouter', allAuth).then(() => {
-              router.addRoutes(store.getters.filterRouter)
-              if (to.path === '/404') {
-                next({
-                  path: to.redirectedFrom || '/',
-                  replace: true
-                })
-              } else {
-                next({
-                  ...to,
-                  replace: true
-                })
-              }
-            })
-          })
+          console.log('store.getters.allAuth为空')
         }
       } else {
         next()
