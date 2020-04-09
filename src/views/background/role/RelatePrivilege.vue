@@ -90,10 +90,12 @@ export default {
       list.map(item => {
         if (item.privileges.length) {
           item.privileges.forEach(item => {
+            item.privilege_level = 0
             for (let i = 0; i < this.privilegeList.length; i++) {
               const privilege = this.privilegeList[i]
               if (privilege.id === item.id) {
                 item.privilege_level = privilege.privilege_level
+                break
               }
             }
           })
