@@ -1,49 +1,40 @@
-import { asyncRouter } from '@/router'
-
-const filterModules = function (websites) {
-  let modules = []
-  for (let i = 0; i < websites.length; i++) {
-    const website = websites[i]
-    if (website.id === 'acb7033c-dd90-4486-887e-1c36d6365c25') {
-      modules = website.common_Modules.map(moduleItem => {
-        const privileges = moduleItem.common_Privileges.map(privilege => {
-          return privilege.type
-        })
-        return {
-          id: moduleItem.id,
-          name: moduleItem.name,
-          code: moduleItem.code,
-          url: moduleItem.url,
-          is_auto_expand: moduleItem.is_auto_expand,
-          privileges
-        }
-      })
-    }
-  }
-  return modules
+const getAsyncRouter = function (websites) {
+  const tempList = []
+  websites.forEach(website => {
+    tempList.push({
+      name: website.code,
+      path: '/' + website.code,
+      component: () => import('@/views' + website.url),
+      meta: {
+        icon: website.code,
+        title: website.name
+      },
+      children: getChildrenRouter(website.modules)
+    })
+  })
+  return tempList
 }
 
-const _import = file => require('@/views/background/' + file + '/index')
-
-const filterAsyncRouter = function (modules) {
-  const router = modules.map(item => {
-    return {
-      name: item.code,
-      path: `/${item.code}`,
-      component: _import(item.code),
+const getChildrenRouter = function (modules) {
+  const tempList = []
+  modules.forEach(moduleItem => {
+    const children = getChildrenRouter(moduleItem.children)
+    tempList.push({
+      name: moduleItem.code,
+      path: moduleItem.code,
+      component: () => import('@/views' + moduleItem.url),
       meta: {
-        icon: item.code,
-        title: item.name
-      }
-    }
+        icon: moduleItem.icon,
+        title: moduleItem.name
+      },
+      children
+    })
   })
-  asyncRouter[0].children = router
-  return asyncRouter
+  return tempList
 }
 
 const setRediretRouter = function (modules) {
-  // const tempRouters = filterAsyncRouter(modules)
-  const tempRouters = asyncRouter
+  const tempRouters = getAsyncRouter(modules)
   let redirect = ''
   // 设置子系统的重定向，默认每个项目的重定向是第一个子项
   tempRouters.map(item => {
@@ -62,23 +53,34 @@ const setRediretRouter = function (modules) {
       hidden: true
     })
   }
+  tempRouters.push({
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  })
   return tempRouters
 }
 
 const permission = {
   state: {
-    filterRouter: [],
+    asyncRouter: [],
     backgroundRouter: {
       name: 'background',
+      children: []
+    },
+    collaborativeRouter: {
+      name: 'collaborative',
       children: []
     }
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.filterRouter = routers
+      state.asyncRouter = routers
       routers.map(item => {
         if (item.name === 'background') {
           state.backgroundRouter = item
+        } else if (item.name === 'collaborative') {
+          state.collaborativeRouter = item
         }
       })
     }
@@ -86,8 +88,7 @@ const permission = {
   actions: {
     generateRouter ({ commit }, data) {
       return new Promise(resolve => {
-        const modules = filterModules(data)
-        const router = setRediretRouter(modules)
+        const router = setRediretRouter(data)
         commit('SET_ROUTERS', router)
         resolve(router)
       })

@@ -25,9 +25,9 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!loadAsyncRouter) {
         loadAsyncRouter = true
-        if (store.getters.allAuth) {
-          store.dispatch('generateRouter', store.getters.allAuth).then(() => {
-            router.addRoutes(store.getters.filterRouter)
+        if (store.getters.websites) {
+          store.dispatch('generateRouter', store.getters.websites).then(() => {
+            router.addRoutes(store.getters.asyncRouter)
             if (to.path === '404') {
               next({
                 path: to.redirectedFrom || '/',
@@ -41,7 +41,7 @@ router.beforeEach((to, from, next) => {
             }
           })
         } else {
-          console.log('store.getters.allAuth为空')
+          console.log('store.getters.websites为空')
         }
       } else {
         next()

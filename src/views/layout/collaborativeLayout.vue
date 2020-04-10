@@ -5,7 +5,7 @@
     </el-header>
     <el-container>
       <el-aside width="auto" class="aside-container">
-        <sidebar :items="sidebarItems" mainRouter="background"></sidebar>
+        <sidebar :items="sidebarItems" mainRouter="collaborative"></sidebar>
       </el-aside>
       <el-main id="main-container" style="padding:15px;">
         <app-main></app-main>
@@ -29,9 +29,9 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters(['backgroundRouter']),
+    ...mapGetters(['collaborativeRouter']),
     sidebarItems () {
-      return this.backgroundRouter.children
+      return this.collaborativeRouter.children
     }
   },
   methods: {

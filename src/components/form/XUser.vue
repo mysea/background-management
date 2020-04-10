@@ -51,7 +51,7 @@ export default {
       var _this = this
       let data = {
         pageIndex: 1,
-        pagesize: 1000
+        pagesize: 10000
       }
       _this.loading = true
       getUsers(data).then(res => {

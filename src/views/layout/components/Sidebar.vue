@@ -32,7 +32,7 @@
       <template
         v-for="(item, index) in items">
         <router-link
-          v-if="!item.children"
+          v-if="!item.children.length"
           :key="index"
           :to="getFullPath(item.path)">
           <el-menu-item

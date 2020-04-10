@@ -21,6 +21,7 @@ export default {
     return {
       selectedIndex: -1,
       icons: [
+        '',
         // 协同平台
         'analysis',
         'momey',
