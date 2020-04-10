@@ -74,19 +74,28 @@ export default {
   computed: {
     ...mapGetters([
       'userInfo',
-      'background'
+      'websites'
     ]),
     items () {
       var tempItems = []
-      // if (this.filterAuth(this.background)) {
-      if (this.background) {
-        tempItems.push({
-          title: '后台管理',
-          type: 3,
-          path: '/background',
-          icon: 'background'
-        })
-      }
+      this.websites.forEach(website => {
+        if (website.code === 'background') {
+          tempItems.push({
+            title: '后台管理',
+            type: 1,
+            path: '/background',
+            icon: 'workbench'
+          })
+        }
+        if (website.code === 'collaborative') {
+          tempItems.push({
+            title: '协同平台',
+            type: 2,
+            path: '/collaborative',
+            icon: 'customer'
+          })
+        }
+      })
       return tempItems.length <= 1 ? [] : tempItems
     }
   },
@@ -97,16 +106,6 @@ export default {
     ...mapActions([
       'logout'
     ]),
-    filterAuth (authInfo) {
-      var result = false
-      for (var i in authInfo) {
-        if (authInfo[i].length) {
-          result = true
-          break
-        }
-      }
-      return result
-    },
     navItemsClick (type) {
       this.navIndexChild = type
       this.$store.commit('SET_NAV_ACTIVE_INDEX', type)
