@@ -52,7 +52,7 @@
         <el-submenu
           v-else
           :key="index"
-          :index="getFullPath(item.path)">
+          :index="getCascadeFullPath(item.path, '')">
           <template slot="title" v-if="!item.hidden">
             <i class="grg"
               :class="'grg-' + item.meta.icon"
@@ -64,11 +64,11 @@
             <router-link
               v-if="!subitem.hidden"
               :key="subindex"
-              :to="getFullPath(subitem.path)">
+              :to="getCascadeFullPath(item.path, subitem.path)">
               <el-menu-item
-                :index="getFullPath(subitem.path)"
+                :index="getCascadeFullPath(item.path, subitem.path)"
                 class="menu-item-default"
-                :class="{ 'menu-item-select': activeIndex == getFullPath(subitem.path) }">
+                :class="{ 'menu-item-select': activeIndex == getCascadeFullPath(item.path, subitem.path) }">
                 {{ subitem.meta.title }}
               </el-menu-item>
             </router-link>
@@ -169,6 +169,9 @@ export default {
     },
     getFullPath (path) {
       return `/${this.mainRouter}/${path}`
+    },
+    getCascadeFullPath (parentPath, childrenPath) {
+      return `/${this.mainRouter}/${parentPath}/${childrenPath}`
     },
     toggleSideBarClick () {
       this.collapse = !this.collapse

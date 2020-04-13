@@ -1,7 +1,7 @@
 const getAsyncRouter = function (websites) {
   const tempList = []
   websites.forEach(website => {
-    tempList.push({
+    const tempWebsite = {
       name: website.code,
       path: '/' + website.code,
       component: () => import('@/views' + website.url),
@@ -10,7 +10,26 @@ const getAsyncRouter = function (websites) {
         title: website.name
       },
       children: getChildrenRouter(website.modules)
+    }
+    // 设置站点的重定向，默认每个站点的重定向是第一个子项
+    if (tempWebsite.children[0].path) {
+      const redirect = '/' + website.code + '/' + tempWebsite.children[0].path
+      tempWebsite.redirect = redirect
+    }
+    tempList.push(tempWebsite)
+  })
+  // 设置根路径的重定向，默认跳转到第一个站点的第一个子项
+  if (tempList[0].redirect) {
+    tempList.push({
+      path: '/',
+      redirect: tempList[0].redirect,
+      hidden: true
     })
+  }
+  tempList.push({
+    path: '*',
+    redirect: '/404',
+    hidden: true
   })
   return tempList
 }
@@ -18,8 +37,7 @@ const getAsyncRouter = function (websites) {
 const getChildrenRouter = function (modules) {
   const tempList = []
   modules.forEach(moduleItem => {
-    const children = getChildrenRouter(moduleItem.children)
-    tempList.push({
+    const tempModule = {
       name: moduleItem.code,
       path: moduleItem.code,
       component: () => import('@/views' + moduleItem.url),
@@ -27,38 +45,16 @@ const getChildrenRouter = function (modules) {
         icon: moduleItem.icon,
         title: moduleItem.name
       },
-      children
-    })
+      children: getChildrenRouter(moduleItem.children)
+    }
+    // 如果有多级，父项的重定向为第一个子项
+    if (tempModule.children.length > 0) {
+      const redirect = moduleItem.code + '/' + tempModule.children[0].path
+      tempModule.redirect = redirect
+    }
+    tempList.push(tempModule)
   })
   return tempList
-}
-
-const setRediretRouter = function (modules) {
-  const tempRouters = getAsyncRouter(modules)
-  let redirect = ''
-  // 设置子系统的重定向，默认每个项目的重定向是第一个子项
-  tempRouters.map(item => {
-    if (item.children && item.children.length > 0) {
-      item.redirect = item.path + '/' + item.children[0].path
-    }
-    if (item.redirect && !redirect) { // 默认设置/的重定向为第一个子系统的重定向
-      redirect = item.redirect
-    }
-  })
-  // 设置根目录的重定向，默认跳转到第一个项目的第一个子项
-  if (redirect) {
-    tempRouters.push({
-      path: '/',
-      redirect: redirect,
-      hidden: true
-    })
-  }
-  tempRouters.push({
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  })
-  return tempRouters
 }
 
 const permission = {
@@ -88,7 +84,7 @@ const permission = {
   actions: {
     generateRouter ({ commit }, data) {
       return new Promise(resolve => {
-        const router = setRediretRouter(data)
+        const router = getAsyncRouter(data)
         commit('SET_ROUTERS', router)
         resolve(router)
       })
