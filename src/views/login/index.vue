@@ -45,6 +45,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { toast } from '@/utils/toast'
 export default {
   data () {
     return {
@@ -85,6 +86,7 @@ export default {
             _this.$router.push({ path: this.redirect || '/' })
           }).catch(err => {
             _this.loading = false
+            toast('error', err)
           })
         } else {
           return false

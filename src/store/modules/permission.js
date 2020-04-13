@@ -19,7 +19,7 @@ const getAsyncRouter = function (websites) {
     tempList.push(tempWebsite)
   })
   // 设置根路径的重定向，默认跳转到第一个站点的第一个子项
-  if (tempList[0].redirect) {
+  if (tempList[0] && tempList[0].redirect) {
     tempList.push({
       path: '/',
       redirect: tempList[0].redirect,

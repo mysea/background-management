@@ -73,6 +73,10 @@ const user = {
         login(data).then(res => {
           if (res) {
             const loginMsg = res.loginMsg
+            if (!loginMsg.common_WebSites.length) {
+              reject(new Error('你没有访问任何站点的权限！'))
+              return
+            }
             commit('SET_WEBSITES', formatWebsites(loginMsg.common_WebSites))
             delete loginMsg.common_WebSites
             commit('SET_USER_INFO', loginMsg)
@@ -87,6 +91,7 @@ const user = {
     logout ({ commit }) {
       return new Promise((resolve, reject) => {
         Lockr.rm('Authorization')
+        Lockr.rm('vuex')
         resolve()
       })
     }
