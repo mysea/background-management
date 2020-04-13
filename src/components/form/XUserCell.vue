@@ -6,9 +6,8 @@
     <x-user
       ref="xuser"
       v-if="showSelectView"
-      :radio="radio"
-      :checkedList = "dataValue"
-      @checkedChange = "checkItems"></x-user>
+      :checkedList="dataValue"
+      @checkedChange="checkItems"></x-user>
       <div slot="reference">
         <flexbox @click.native="focusClick"
           wrap="wrap"
@@ -37,10 +36,6 @@ export default {
         return []
       }
     },
-    radio: {
-      type: Boolean,
-      default: true
-    },
     placeholder: {
       type: String,
       default: '添加'
@@ -64,15 +59,13 @@ export default {
     checkItems (data) {
       this.dataValue = data.data
       this.$emit('value-change', {
-        value: data.data
+        value: this.dataValue
       })
     },
     deleteItem (item) {
       if (this.$refs.xuser) {
-        this.$refs.xuser.clickItem(item['index'])
+        this.$refs.xuser.toggleItem(item['index'])
       }
-      // this.dataValue.splice(index, 1)
-      // console.log(JSON.parse(JSON.stringify(this.dataValue)))
       this.$emit('value-change', {
         value: this.dataValue
       })
@@ -80,6 +73,11 @@ export default {
     focusClick () {
       this.showSelectView = true
       this.$emit('forcus')
+    },
+    resetData () {
+      if (this.$refs.xuser) {
+        this.$refs.xuser.resetData()
+      }
     }
   }
 }

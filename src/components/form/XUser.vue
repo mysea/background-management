@@ -1,21 +1,30 @@
 <template>
-  <div>
+  <div v-el-select-loadmore="getList">
     <el-input
       placeholder="搜索用户名"
       size="small"
       v-model="searchInput"
+      clearable
+      @clear="searchChange">
+      <el-button slot="append" icon="el-icon-search" @click="searchChange"></el-button>
+    </el-input>
+    <!-- <el-input
+      placeholder="搜索用户名"
+      size="small"
+      v-model="searchInput"
       suffix-icon="el-icon-search"
-      @input="searchChange"></el-input>
-    <div v-loading="loading" class="item-list">
+      @input="searchChange"></el-input> -->
+    <div class="item-list">
       <div v-for="(item, index) in list" :key="index">
         <div class="item"
           :class="[item.checked ? 'checked' : '']"
-          v-if="item.show"
-          @click="clickItem(index)">
+          @click="toggleItem(index)">
           <span class="name">{{ item.name }}</span>
           <span class="id">{{ item.id }}</span>
         </div>
       </div>
+      <div class="list-finish-text" v-if="finished">没有更多了</div>
+      <div v-loading="loading" style="height: 40px" v-else></div>
     </div>  
   </div>
 </template>
@@ -38,8 +47,12 @@ export default {
   data () {
     return {
       searchInput: '',
+      // 列表相关
       loading: false,
+      finished: false,
+      pageIndex: 0,
       list: [],
+      // 保存选中项
       checkedItems: []
     }
   },
@@ -49,62 +62,84 @@ export default {
   methods: {
     getList () {
       var _this = this
+
+      if (_this.finished) return
+
       let data = {
-        pageIndex: 1,
-        pagesize: 10000
+        employeename: _this.searchInput,
+        pageIndex: ++_this.pageIndex,
+        pagesize: 100
       }
       _this.loading = true
       getUsers(data).then(res => {
-        var tempList = res.list
-        _this.list = tempList.map((item, index) => {
+        _this.loading = false
+        if (res.list.length === 0) {
+          _this.finished = true
+        }
+        // 通过checked属性控制选中状态
+        var tempList = res.list.map((item, index) => {
           var tempObj = {
             id: item['employeeid'],
             name: item['employeename'],
             checked: false,
-            show: true,
             index: index
           }
           if (_this.checkedList.length) {
             for (let i = 0; i < _this.checkedList.length; i++) {
-              if (item['id'] === _this.checkedList[i]['id']) {
+              if (item['employeeid'] === _this.checkedList[i]['id']) {
                 tempObj['checked'] = true
               }
             }
           }
           return tempObj
         })
-        _this.loading = false
+        _this.list = _this.list.concat(tempList)
       })
     },
     searchChange (val) {
-      this.list = this.list.map(item => {
-        if (item['name'].indexOf(val) !== -1) {
-          item['show'] = true
-        } else {
-          item['show'] = false
-        }
-        return item
-      })
+      this.pageIndex = 0
+      this.list = []
+      this.finished = false
+      this.getList()
     },
-    clickItem (index) {
+    toggleItem (index) {
       var _this = this
-      const element = this.list[index]
+      const element = _this.list[index]
       if (element['checked']) { // 取消已经选中的项
-        _this.cancelCheckItem(element)
+        let index = -1
+        _this.checkedItems.forEach((item, i) => {
+          if (item.id === element.id) {
+            index = i
+          }
+        })
+        _this.checkedItems.splice(index, 1)
       } else {
         _this.checkedItems.push(element)
       }
       _this.$emit('checkedChange', { data: _this.checkedItems })
       element['checked'] = !element['checked']
     },
-    cancelCheckItem (item) {
-      var index = -1
-      for (let i = 0; i < this.checkedItems.length; i++) {
-        if (this.checkedItems[i]['id'] === item['id']) {
-          index = i
-        }
+    resetData () {
+      this.searchInput = ''
+      this.finished = false
+      this.pageIndex = 0
+      this.list = []
+      this.checkedItems = []
+    }
+  },
+  directives: {
+    'el-select-loadmore': {
+      bind: function (el, binding) {
+        var WRAP_DOM = el.querySelector('.item-list')
+        WRAP_DOM.addEventListener('scroll', function () {
+          var condition = this.scrollHeight - this.scrollTop <= this.clientHeight
+          if (condition) {
+            setTimeout(() => {
+              binding.value()
+            }, 3000)
+          }
+        })
       }
-      this.checkedItems.splice(index, 1)
     }
   }
 }
@@ -150,5 +185,12 @@ export default {
   font-size: 12px;
   font-weight: 700;
   -webkit-font-smoothing: antialiased;
+}
+
+.list-finish-text {
+  font-size: 14px;
+  line-height: 40px;
+  text-align: center;
+  color: #999;
 }
 </style>

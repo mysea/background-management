@@ -47,6 +47,7 @@
         <flexbox class="handle-item" align="stretch">
           <div class="handle-item-name" style="margin-top: 8px;">选择用户：</div>
           <x-user-cell
+            ref="xUserCell"
             :value="selectedUsers"
             @value-change="checkoutChange"
             class="handle-item-content"></x-user-cell>
@@ -114,6 +115,9 @@ export default {
     },
     handleCancel () {
       this.visible = false
+      if (this.$refs.xUserCell) {
+        this.$refs.xUserCell.resetData()
+      }
     },
     handleConfirm () {
       this.visible = false
@@ -124,13 +128,13 @@ export default {
         addRoleUser(this.role.id, userIdList).then(res => {
           if (res) {
             saveSuccessToast()
+            this.selectedUsers = []
             this.getList()
           }
         })
       }
     },
     checkoutChange (data) {
-      console.log(this.selectedUsers)
       this.selectedUsers = data.value
     }
   }
