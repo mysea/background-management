@@ -219,7 +219,7 @@ export default {
         this.authLoading = false
         var tempList = res.map(item => {
           return {
-            id: item.id,
+            privilegeid: item.id,
             privilege_level: item.privilege_level
           }
         })

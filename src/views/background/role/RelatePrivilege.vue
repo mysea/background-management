@@ -47,13 +47,15 @@ export default {
   },
   created () {
     this.getModulePrivilegeList()
-    window.onresize = () => {
-      this.updateTreeHeight()
-    }
   },
   mounted () {
     this.privilegeList = this.value
     this.filterTree(this.tree)
+  },
+  updated () {
+    window.onresize = () => {
+      this.updateTreeHeight()
+    }
   },
   methods: {
     // 获取模块权限
@@ -87,21 +89,21 @@ export default {
     },
     // 遍历每个节点的权限列表，如果在已有的权限中，则设置为选中
     filterTree (list) {
+      var _this = this
       list.map(item => {
         if (item.privileges.length) {
-          item.privileges.forEach(item => {
-            item.privilege_level = 0
-            for (let i = 0; i < this.privilegeList.length; i++) {
-              const privilege = this.privilegeList[i]
-              if (privilege.id === item.id) {
-                item.privilege_level = privilege.privilege_level
+          item.privileges.forEach(privilege => {
+            privilege.privilege_level = 0
+            for (let i = 0; i < _this.privilegeList.length; i++) {
+              if (_this.privilegeList[i].privilegeid === privilege.id) {
+                privilege.privilege_level = _this.privilegeList[i].privilege_level
                 break
               }
             }
           })
         }
         if (item.children && item.children.length) {
-          this.filterTree(item.children)
+          _this.filterTree(item.children)
         }
       })
     },
