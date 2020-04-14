@@ -12,7 +12,7 @@ const getAsyncRouter = function (websites) {
       children: getChildrenRouter(website.modules)
     }
     // 设置站点的重定向，默认每个站点的重定向是第一个子项
-    if (tempWebsite.children[0].path) {
+    if (tempWebsite.children[0] && tempWebsite.children[0].path) {
       const redirect = '/' + website.code + '/' + tempWebsite.children[0].path
       tempWebsite.redirect = redirect
     }
