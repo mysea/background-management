@@ -10,12 +10,11 @@
           <div class="item"
             v-for="(item, index) in roleList"
             :key="index"
-            @click="selectRole(item)"
             :class="{ 'item-hover' : item.id === activeRole.id}">
-            {{ item.name }}
+            <div class="name" @click="selectRole(item)">{{ item.name }}</div>
             <div class="item-dropdown">
-              <el-dropdown trigger="click" @command="handleRoleClick">
-                <i class="el-icon-more"></i>
+              <el-dropdown trigger="click" @command="handleRoleClick($event, item)">
+                <i class="grg grg-more"></i>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="edit">编辑</el-dropdown-item>
                   <el-dropdown-item command="delete">删除</el-dropdown-item>
@@ -130,16 +129,20 @@ export default {
   },
   methods: {
     getRoleList () {
-      if (this.website.value) {
+      var _this = this
+      if (_this.website.value) {
         let data = {
           pageIndex: 1,
           pagesize: 1000,
-          website_id: this.website.value
+          website_id: _this.website.value
         }
-        this.navLoading = true
+        _this.navLoading = true
         getRoles(data).then(res => {
-          this.navLoading = false
-          this.roleList = res.list
+          _this.navLoading = false
+          _this.roleList = res.list
+          if (_this.roleList.length) {
+            _this.selectRole(_this.roleList[0])
+          }
         })
       }
     },
@@ -151,8 +154,7 @@ export default {
       this.isShowDialog = true
       this.dialogTitle = '新建'
     },
-    handleRoleClick (command) {
-      var role = this.activeRole
+    handleRoleClick (command, role) {
       if (role.id) {
         if (command === 'edit') {
           this.isShowDialog = true
@@ -312,12 +314,15 @@ export default {
   .item {
     color: #333;
     font-size: 13px;
-    padding-left: 30px;
     height: 40px;
     line-height: 40px;
     border-right: 2px solid transparent;
     cursor: pointer;
     position: relative;
+    .name {
+      margin-left: 30px;
+      margin-right: 20px;
+    }
     .item-dropdown {
       position: absolute;
       top: 0;
