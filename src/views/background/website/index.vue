@@ -73,6 +73,29 @@
         <el-button @click="isShowDialog = false">取 消</el-button>
       </span>
     </el-dialog>
+
+    <!-- 关联用户 -->
+    <el-dialog
+      title="关联用户"
+      :visible="visible"
+      @close="handleCancel"
+      :append-to-body="true"
+      width="600px">
+      <div class="handle-box">
+        <flexbox class="handle-item" align="stretch">
+          <div class="handle-item-name" style="margin-top: 8px;">选择用户：</div>
+          <x-user-cell
+            ref="xUserCell"
+            :value="selectedUsers"
+            @value-change="checkoutChange"
+            class="handle-item-content"></x-user-cell>
+        </flexbox>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel">取消</el-button>
+        <el-button type="primary" @click="handleConfirm">保存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,8 +112,12 @@ import {
   deleteConfirm
   } from '@/utils/toast'
 import table from '../mixins/table'
+import { XUserCell } from '@/components/form'
 export default {
   mixins: [table],
+  components: {
+    XUserCell
+  },
   data () {
     return {
       type: 'website',
@@ -104,7 +131,11 @@ export default {
         home_url: '',
         status: 0
       },
-      websiteFormRules: {}
+      websiteFormRules: {},
+      // 关联用户
+      websiteid: '',
+      visible: false,
+      selectedUsers: []
     }
   },
   created () {
@@ -122,12 +153,8 @@ export default {
         this.websiteForm = JSON.parse(JSON.stringify(row))
         this.websiteForm.status = this.websiteForm.status === 1
       } else {
-        let users = ['G0109115']
-        addWebsiteUser(row.id, users).then(res => {
-          if (res) {
-            saveSuccessToast()
-          }
-        })
+        this.visible = true
+        this.websiteid = row.id
       }
     },
     closeDialog () {
@@ -177,6 +204,30 @@ export default {
         status: 0
       }
       this.$refs[formName].resetFields()
+    },
+    // 关联用户
+    handleCancel () {
+      this.visible = false
+      if (this.$refs.xUserCell) {
+        this.$refs.xUserCell.resetData()
+      }
+    },
+    handleConfirm () {
+      this.visible = false
+      var userIdList = this.selectedUsers.map(item => {
+        return item.id
+      })
+      if (userIdList.length) {
+        addWebsiteUser(this.websiteid, userIdList).then(res => {
+          if (res) {
+            saveSuccessToast()
+            this.selectedUsers = []
+          }
+        })
+      }
+    },
+    checkoutChange (data) {
+      this.selectedUsers = data.value
     }
   }
 }
@@ -187,5 +238,20 @@ export default {
 .content {
   background: #fff;
   border: 1px solid #e6e6e6;
+}
+
+.handle-box {
+  color: #333;
+  font-size: 12px;
+  .handle-item {
+    padding-bottom: 15px;
+    .handle-item-name {
+      flex-shrink: 0;
+      width: 90px;
+    }
+    .handle-item-content {
+      flex: 1;
+    }
+  }
 }
 </style>
