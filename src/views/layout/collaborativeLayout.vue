@@ -7,23 +7,29 @@
       <el-aside width="auto" class="aside-container">
         <sidebar :items="sidebarItems" mainRouter="collaborative"></sidebar>
       </el-aside>
-      <el-main id="main-container" style="padding:15px;">
-        <app-main></app-main>
-      </el-main>
+      <el-container>
+        <el-header style="height: auto;padding: 0px;">
+          <tags-view></tags-view>
+        </el-header>
+        <el-main id="main-container" style="padding:15px;">
+          <app-main></app-main>
+        </el-main>
+      </el-container>
     </el-container>
   </el-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { Navbar, Sidebar, AppMain } from './components'
+import { Navbar, Sidebar, AppMain, TagsView } from './components'
 
 export default {
   name: 'Layout',
   components: {
     Navbar,
     Sidebar,
-    AppMain
+    AppMain,
+    TagsView
   },
   data () {
     return {}

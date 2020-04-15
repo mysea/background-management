@@ -10,8 +10,8 @@ export default {
     return {
       loading: false,
       searchInput: '', // 搜索框文本
-      tableHeight: document.documentElement.clientHeight - 188,
-      tableHeight1: document.documentElement.clientHeight - 244,
+      tableHeight: document.documentElement.clientHeight - 228,
+      tableHeight1: document.documentElement.clientHeight - 284,
       list: [],
       selectionsList: [],
       total: 0,
@@ -128,8 +128,8 @@ export default {
       this.getList()
     },
     updateTableHeight () {
-      this.tableHeight = document.documentElement.clientHeight - 188
-      this.tableHeight1 = document.documentElement.clientHeight - 244
+      this.tableHeight = document.documentElement.clientHeight - 228
+      this.tableHeight1 = document.documentElement.clientHeight - 284
     }
   }
 }
